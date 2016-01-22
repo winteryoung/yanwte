@@ -1,6 +1,6 @@
 # Introduction
 
-Yanwte stands for yet another way to extend. It's a library to help your extending your programs.
+Yanwte stands for yet another way to extend. It's a library to help you extending your programs.
 
 # Installation
 
