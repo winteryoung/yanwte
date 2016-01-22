@@ -10,7 +10,6 @@ import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Label
 import org.objectweb.asm.Opcodes.*
 import org.objectweb.asm.Type
-import java.io.File
 import java.lang.reflect.Method
 
 /*
@@ -43,7 +42,6 @@ internal fun generateExtensionExecutionProxy(
     }
 
     val (name, bytes) = generateExtensionExecutionProxyBytes(extensionPoint)
-    File("c:/users/winter/desktop/ExtensionPointTest\$TestExtensionPointReturningVoid__yanwteProxy__.class").writeBytes(bytes)
     return loadExtensionPointProxyInstance(name, bytes, extension)
 }
 
