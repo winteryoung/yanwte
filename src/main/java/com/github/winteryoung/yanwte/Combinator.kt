@@ -1,7 +1,7 @@
 package com.github.winteryoung.yanwte
 
 import com.github.winteryoung.yanwte.internals.YanwteExtension
-import com.github.winteryoung.yanwte.internals.combinators.LeafExtensionCombinator
+import com.github.winteryoung.yanwte.internals.combinators.ExtensionCombinator
 import java.util.*
 
 /**
@@ -48,7 +48,7 @@ abstract class Combinator(
 
     internal fun collectDependentExtensions(): List<YanwteExtension> {
         fun recur(accumulator: MutableList<YanwteExtension>, tree: Combinator) {
-            if (tree is LeafExtensionCombinator) {
+            if (tree is ExtensionCombinator) {
                 accumulator.add(tree.extension)
             } else {
                 for (node in nodes) {

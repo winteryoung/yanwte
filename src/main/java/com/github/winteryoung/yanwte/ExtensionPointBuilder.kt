@@ -4,7 +4,7 @@ import com.github.winteryoung.yanwte.internals.ExtensionPoint
 import com.github.winteryoung.yanwte.internals.YanwteExtension
 import com.github.winteryoung.yanwte.internals.combinators.ChainCombinator
 import com.github.winteryoung.yanwte.internals.combinators.EmptyCombinator
-import com.github.winteryoung.yanwte.internals.combinators.LeafExtensionCombinator
+import com.github.winteryoung.yanwte.internals.combinators.ExtensionCombinator
 import com.github.winteryoung.yanwte.internals.combinators.MapReduceCombinator
 import java.lang.reflect.Method
 
@@ -68,7 +68,7 @@ open class ExtensionPointBuilder<EP>(
         val plugin = YanwtePlugin.getPluginByExtensionName(extensionName)
         val extPojo = plugin.getExtensionByName(extensionName)
                 ?: throw YanwteException("Cannot find extension POJO with name $extensionName")
-        return LeafExtensionCombinator(extensionPointName, YanwteExtension.fromPojo(extPojo))
+        return ExtensionCombinator(extensionPointName, YanwteExtension.fromPojo(extPojo))
     }
 
     /**

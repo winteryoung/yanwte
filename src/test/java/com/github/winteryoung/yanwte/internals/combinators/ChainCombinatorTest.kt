@@ -48,5 +48,5 @@ class ChainCombinatorTest {
     private fun buildExtNode(
             extensionPointName: String = "testExtPoint",
             extension: YanwteExtension
-    ) = LeafExtensionCombinator(extensionPointName, extension)
+    ) = ExtensionCombinator(extensionPointName, extension)
 }

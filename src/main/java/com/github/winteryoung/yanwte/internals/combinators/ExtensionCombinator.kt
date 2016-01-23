@@ -11,7 +11,7 @@ import com.github.winteryoung.yanwte.internals.YanwteExtension
  * @author Winter Young
  * @since 2016/1/17
  */
-internal class LeafExtensionCombinator constructor(
+internal class ExtensionCombinator constructor(
         extensionPointName: String,
         val extension: YanwteExtension
 ) : Combinator(extensionPointName, emptyList(), "ext") {

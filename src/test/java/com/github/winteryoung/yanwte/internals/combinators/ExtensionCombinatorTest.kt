@@ -11,10 +11,10 @@ import org.junit.Test
  * @author Winter Young
  * @since 2016/1/19
  */
-class LeafExtensionCombinatorTest {
+class ExtensionCombinatorTest {
     @Test
     fun testNormal() {
-        val node = LeafExtensionCombinator("testExtPoint", YanwteExtension("testExt", ExtensionExecution { input ->
+        val node = ExtensionCombinator("testExtPoint", YanwteExtension("testExt", ExtensionExecution { input ->
             val (args) = input
             val (arg) = args
             ExtensionPointOutput(arg as Int * 3)
