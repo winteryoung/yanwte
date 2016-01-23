@@ -1,7 +1,7 @@
 package com.github.winteryoung.yanwte
 
 import com.github.winteryoung.yanwte.internals.YanwteExtension
-import com.github.winteryoung.yanwte.internals.trees.LeafExtensionTree
+import com.github.winteryoung.yanwte.internals.combinators.LeafExtensionCombinator
 import java.util.*
 
 /**
@@ -10,7 +10,7 @@ import java.util.*
  * @author Winter Young
  * @since 2016/1/17
  */
-abstract class ExtensionTree(
+abstract class Combinator(
         /**
          * The name of the corresponding extension point.
          */
@@ -18,7 +18,7 @@ abstract class ExtensionTree(
         /**
          * Sub nodes.
          */
-        val nodes: List<ExtensionTree>,
+        val nodes: List<Combinator>,
         /**
          * Extension tree node name.
          */
@@ -47,8 +47,8 @@ abstract class ExtensionTree(
     protected abstract fun invokeImpl(input: ExtensionPointInput): ExtensionPointOutput
 
     internal fun collectDependentExtensions(): List<YanwteExtension> {
-        fun recur(accumulator: MutableList<YanwteExtension>, tree: ExtensionTree) {
-            if (tree is LeafExtensionTree) {
+        fun recur(accumulator: MutableList<YanwteExtension>, tree: Combinator) {
+            if (tree is LeafExtensionCombinator) {
                 accumulator.add(tree.extension)
             } else {
                 for (node in nodes) {

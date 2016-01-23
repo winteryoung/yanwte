@@ -1,4 +1,4 @@
-package com.github.winteryoung.yanwte.internals.trees
+package com.github.winteryoung.yanwte.internals.combinators
 
 import com.github.winteryoung.yanwte.ExtensionPointInput
 import com.github.winteryoung.yanwte.ExtensionPointOutput
@@ -21,7 +21,7 @@ class ChainExtensionTreeTest {
             if (i % 2 != 0) i - 1 else null
         }
 
-        val node = ChainExtensionTree("testExtPoint", listOf(
+        val node = ChainCombinator("testExtPoint", listOf(
                 buildExtNode(extension = ext1),
                 buildExtNode(extension = ext2)
         ))
@@ -48,5 +48,5 @@ class ChainExtensionTreeTest {
     private fun buildExtNode(
             extensionPointName: String = "testExtPoint",
             extension: YanwteExtension
-    ) = LeafExtensionTree(extensionPointName, extension)
+    ) = LeafExtensionCombinator(extensionPointName, extension)
 }

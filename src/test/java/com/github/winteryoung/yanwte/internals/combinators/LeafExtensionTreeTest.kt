@@ -1,4 +1,4 @@
-package com.github.winteryoung.yanwte.internals.trees
+package com.github.winteryoung.yanwte.internals.combinators
 
 import com.github.winteryoung.yanwte.ExtensionPointInput
 import com.github.winteryoung.yanwte.ExtensionPointOutput
@@ -14,7 +14,7 @@ import org.junit.Test
 class LeafExtensionTreeTest {
     @Test
     fun testNormal() {
-        val node = LeafExtensionTree("testExtPoint", YanwteExtension("testExt", ExtensionExecution { input ->
+        val node = LeafExtensionCombinator("testExtPoint", YanwteExtension("testExt", ExtensionExecution { input ->
             val (args) = input
             val (arg) = args
             ExtensionPointOutput(arg as Int * 3)

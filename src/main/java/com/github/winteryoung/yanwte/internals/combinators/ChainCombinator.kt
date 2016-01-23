@@ -1,8 +1,8 @@
-package com.github.winteryoung.yanwte.internals.trees
+package com.github.winteryoung.yanwte.internals.combinators
 
+import com.github.winteryoung.yanwte.Combinator
 import com.github.winteryoung.yanwte.ExtensionPointInput
 import com.github.winteryoung.yanwte.ExtensionPointOutput
-import com.github.winteryoung.yanwte.ExtensionTree
 
 /**
  * A chain tree node pass a given input to each sub nodes sequentially,
@@ -12,10 +12,10 @@ import com.github.winteryoung.yanwte.ExtensionTree
  * @author Winter Young
  * @since 2016/1/17
  */
-internal class ChainExtensionTree(
+internal class ChainCombinator(
         extensionPointName: String,
-        nodes: List<ExtensionTree>
-) : ExtensionTree(extensionPointName, nodes, "mutex") {
+        nodes: List<Combinator>
+) : Combinator(extensionPointName, nodes, "mutex") {
     override fun invokeImpl(input: ExtensionPointInput): ExtensionPointOutput {
         for (node in nodes) {
             val (output) = node(input)

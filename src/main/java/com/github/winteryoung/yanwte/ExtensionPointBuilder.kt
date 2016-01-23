@@ -2,9 +2,9 @@ package com.github.winteryoung.yanwte
 
 import com.github.winteryoung.yanwte.internals.ExtensionPoint
 import com.github.winteryoung.yanwte.internals.YanwteExtension
-import com.github.winteryoung.yanwte.internals.trees.ChainExtensionTree
-import com.github.winteryoung.yanwte.internals.trees.EmptyExtensionTree
-import com.github.winteryoung.yanwte.internals.trees.LeafExtensionTree
+import com.github.winteryoung.yanwte.internals.combinators.ChainCombinator
+import com.github.winteryoung.yanwte.internals.combinators.EmptyCombinator
+import com.github.winteryoung.yanwte.internals.combinators.LeafExtensionCombinator
 import java.lang.reflect.Method
 
 /**
@@ -16,7 +16,7 @@ import java.lang.reflect.Method
  * @author Winter Young
  * @since 2016/1/17
  */
-class ExtensionPointBuilder(
+open class ExtensionPointBuilder(
         /**
          * The SAM interface that represents this extension point.
          */
@@ -27,7 +27,7 @@ class ExtensionPointBuilder(
     /**
      * The extension tree of the extension point.
      */
-    var tree: ExtensionTree = EmptyExtensionTree(extensionPointName)
+    var tree: Combinator = EmptyCombinator(extensionPointName)
 
     /**
      * Build the extension point instance.
@@ -35,7 +35,7 @@ class ExtensionPointBuilder(
     internal fun build(): ExtensionPoint {
         val method = parseMethod(extensionPointInterface)
         return ExtensionPoint(extensionPointName, extensionPointInterface, method).apply {
-            this.extensionTree = tree
+            this.combinator = tree
         }
     }
 
@@ -57,28 +57,28 @@ class ExtensionPointBuilder(
     }
 
     /**
-     * Returns the extension tree node of the given class. [extensionClass] must have a
+     * Returns the extension combinator of the given class. [extensionClass] must have a
      * parameterless constructor.
      */
-    fun extOfClass(extensionClass: Class<*>): ExtensionTree {
+    fun extOfClass(extensionClass: Class<*>): Combinator {
         val extensionName = extensionClass.name
         val plugin = YanwtePlugin.getPluginByExtensionName(extensionName)
         val extPojo = plugin.getExtensionByName(extensionName)
                 ?: throw YanwteException("Cannot find extension POJO with name $extensionName")
-        return LeafExtensionTree(extensionPointName, YanwteExtension.fromPojo(extPojo))
+        return LeafExtensionCombinator(extensionPointName, YanwteExtension.fromPojo(extPojo))
     }
 
     /**
-     * In case anyone wants to write an empty provide, this node can help.
+     * In case anyone wants to write an empty provide, this combinator can help.
      * It does nothing but returns null on any input.
      */
-    fun empty(): ExtensionTree = EmptyExtensionTree(extensionPointName)
+    fun empty(): Combinator = EmptyCombinator(extensionPointName)
 
     /**
-     * A mutex semantic node pass a given input to each sub nodes sequentially,
+     * A chain of responsibility combinator pass a given input to each sub nodes sequentially,
      * and stops and returns the value returned by the node that returns a non-null value.
-     * This node has the semantics of short-circuit, just like the responsibility chain pattern.
+     * This node has the semantics of short-circuit.
      */
-    fun chain(vararg nodes: ExtensionTree): ExtensionTree =
-            ChainExtensionTree(extensionPointName, nodes.toList())
+    fun chain(vararg nodes: Combinator): Combinator =
+            ChainCombinator(extensionPointName, nodes.toList())
 }

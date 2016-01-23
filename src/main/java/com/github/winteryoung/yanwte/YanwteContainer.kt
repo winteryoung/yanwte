@@ -56,7 +56,7 @@ object YanwteContainer {
     fun registerExtensionPoint(extensionPoint: ExtensionPoint) {
         nameToExtPoint[extensionPoint.name] = extensionPoint
 
-        extensionPoint.extensionTree.collectDependentExtensions().forEach {
+        extensionPoint.combinator.collectDependentExtensions().forEach {
             registerYanwteExtension(it)
         }
     }

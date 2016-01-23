@@ -1,9 +1,9 @@
 package com.github.winteryoung.yanwte.internals
 
+import com.github.winteryoung.yanwte.Combinator
 import com.github.winteryoung.yanwte.ExtensionPointInput
 import com.github.winteryoung.yanwte.ExtensionPointOutput
-import com.github.winteryoung.yanwte.ExtensionTree
-import com.github.winteryoung.yanwte.internals.trees.EmptyExtensionTree
+import com.github.winteryoung.yanwte.internals.combinators.EmptyCombinator
 import java.lang.reflect.Method
 
 /**
@@ -26,24 +26,24 @@ internal class ExtensionPoint(
          */
         val method: Method
 ) {
-    private var _extensionTree: ExtensionTree = EmptyExtensionTree(name)
+    private var _combinator: Combinator = EmptyCombinator(name)
     /**
      * Extension tree.
      */
-    var extensionTree: ExtensionTree
+    var combinator: Combinator
         set(value) {
             if (name != value.extensionPointName) {
                 throw IllegalArgumentException("Different names, expects $name," +
-                        " but got ${extensionTree.extensionPointName}")
+                        " but got ${combinator.extensionPointName}")
             }
-            this._extensionTree = value
+            this._combinator = value
         }
-        get() = _extensionTree
+        get() = _combinator
 
     /**
      * Invokes this extension point.
      */
     operator fun invoke(input: ExtensionPointInput): ExtensionPointOutput {
-        return extensionTree(input)
+        return combinator(input)
     }
 }

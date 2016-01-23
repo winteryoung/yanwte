@@ -1,8 +1,8 @@
-package com.github.winteryoung.yanwte.internals.trees
+package com.github.winteryoung.yanwte.internals.combinators
 
+import com.github.winteryoung.yanwte.Combinator
 import com.github.winteryoung.yanwte.ExtensionPointInput
 import com.github.winteryoung.yanwte.ExtensionPointOutput
-import com.github.winteryoung.yanwte.ExtensionTree
 
 /**
  * In case anyone want to write an empty provide, this node can help.
@@ -11,9 +11,9 @@ import com.github.winteryoung.yanwte.ExtensionTree
  * @author Winter Young
  * @since 2016/1/19
  */
-internal class EmptyExtensionTree(
+internal class EmptyCombinator(
         extensionPointName: String
-) : ExtensionTree(extensionPointName, emptyList(), "empty") {
+) : Combinator(extensionPointName, emptyList(), "empty") {
     override fun invokeImpl(input: ExtensionPointInput): ExtensionPointOutput {
         return ExtensionPointOutput.empty
     }
