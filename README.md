@@ -4,11 +4,13 @@ Yanwte stands for yet another way to extend. It's a library to help you extendin
 
 Maven:
 
-Name|Value
----|---
-Group ID|com.github.winteryoung
-Artifact ID|yanwte
-Version|1.0.0
+```xml
+<dependency>
+  <groupId>com.github.winteryoung</groupId>
+  <artifactId>yanwte</artifactId>
+  <version>1.0.1</version>
+</dependency>
+```
 
 # Licence
 
