@@ -11,7 +11,7 @@ import org.junit.Test
  * @author Winter Young
  * @since 2016/1/19
  */
-class MutexExtensionTreeTest {
+class ChainExtensionTreeTest {
     @Test
     fun test() {
         val ext1 = buildExtension { i ->
@@ -21,7 +21,7 @@ class MutexExtensionTreeTest {
             if (i % 2 != 0) i - 1 else null
         }
 
-        val node = MutexExtensionTree("testExtPoint", listOf(
+        val node = ChainExtensionTree("testExtPoint", listOf(
                 buildExtNode(extension = ext1),
                 buildExtNode(extension = ext2)
         ))

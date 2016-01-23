@@ -2,9 +2,9 @@ package com.github.winteryoung.yanwte
 
 import com.github.winteryoung.yanwte.internals.ExtensionPoint
 import com.github.winteryoung.yanwte.internals.YanwteExtension
+import com.github.winteryoung.yanwte.internals.trees.ChainExtensionTree
 import com.github.winteryoung.yanwte.internals.trees.EmptyExtensionTree
 import com.github.winteryoung.yanwte.internals.trees.LeafExtensionTree
-import com.github.winteryoung.yanwte.internals.trees.MutexExtensionTree
 import java.lang.reflect.Method
 
 /**
@@ -79,6 +79,6 @@ class ExtensionPointBuilder(
      * and stops and returns the value returned by the node that returns a non-null value.
      * This node has the semantics of short-circuit, just like the responsibility chain pattern.
      */
-    fun mutex(vararg nodes: ExtensionTree): ExtensionTree =
-            MutexExtensionTree(extensionPointName, nodes.toList())
+    fun chain(vararg nodes: ExtensionTree): ExtensionTree =
+            ChainExtensionTree(extensionPointName, nodes.toList())
 }

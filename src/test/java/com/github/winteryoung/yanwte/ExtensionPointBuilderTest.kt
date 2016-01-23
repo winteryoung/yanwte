@@ -41,9 +41,9 @@ class ExtensionPointBuilderTest {
     }
 
     @Test
-    fun testMutexApiAcceptance() {
+    fun testChainApiAcceptance() {
         val extensionPoint = ExtensionPointBuilder(TestExtensionPoint::class.java).apply {
-            tree = mutex(
+            tree = chain(
                     extOfClass(TestExtension::class.java)
             )
         }.build()
