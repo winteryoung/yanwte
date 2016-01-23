@@ -51,6 +51,21 @@ class ExtensionPointBuilderTest {
         Assert.assertNotNull(extensionPoint)
     }
 
+    @Test
+    fun testMapReduceApiAcceptance() {
+        val ep = ExtensionPointBuilder(TestExtensionPoint::class.java).apply {
+            tree = mapReduce<Int>(listOf(
+                    extOfClass(TestExtension::class.java)
+            )) { outputs ->
+                outputs.fold(0) { acc, next ->
+                    acc + next
+                }
+            }
+        }
+
+        Assert.assertNotNull(ep)
+    }
+
     interface TestExtensionPoint {
         fun test(a: Int): Int
     }

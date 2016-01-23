@@ -11,7 +11,7 @@ import org.junit.Test
  * @author Winter Young
  * @since 2016/1/19
  */
-class ChainExtensionTreeTest {
+class ChainCombinatorTest {
     @Test
     fun test() {
         val ext1 = buildExtension { i ->

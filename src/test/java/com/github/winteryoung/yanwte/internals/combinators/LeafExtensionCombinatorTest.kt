@@ -11,7 +11,7 @@ import org.junit.Test
  * @author Winter Young
  * @since 2016/1/19
  */
-class LeafExtensionTreeTest {
+class LeafExtensionCombinatorTest {
     @Test
     fun testNormal() {
         val node = LeafExtensionCombinator("testExtPoint", YanwteExtension("testExt", ExtensionExecution { input ->

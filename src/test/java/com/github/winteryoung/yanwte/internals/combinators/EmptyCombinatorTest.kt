@@ -8,7 +8,7 @@ import org.junit.Test
  * @author Winter Young
  * @since 2016/1/19
  */
-class EmptyExtensionTreeTest {
+class EmptyCombinatorTest {
     @Test
     fun test() {
         val node = EmptyCombinator("testExtPoint")

@@ -5,6 +5,7 @@ import com.github.winteryoung.yanwte.internals.YanwteExtension
 import com.github.winteryoung.yanwte.internals.combinators.ChainCombinator
 import com.github.winteryoung.yanwte.internals.combinators.EmptyCombinator
 import com.github.winteryoung.yanwte.internals.combinators.LeafExtensionCombinator
+import com.github.winteryoung.yanwte.internals.combinators.MapReduceCombinator
 import java.lang.reflect.Method
 
 /**
@@ -22,7 +23,7 @@ open class ExtensionPointBuilder(
          */
         val extensionPointInterface: Class<*>
 ) {
-    val extensionPointName = extensionPointInterface.name
+    val extensionPointName: String = extensionPointInterface.name
 
     /**
      * The extension tree of the extension point.
@@ -75,10 +76,31 @@ open class ExtensionPointBuilder(
     fun empty(): Combinator = EmptyCombinator(extensionPointName)
 
     /**
-     * A chain of responsibility combinator pass a given input to each sub nodes sequentially,
+     * A chain of responsibility combinator passes a given input to each sub nodes sequentially,
      * and stops and returns the value returned by the node that returns a non-null value.
      * This node has the semantics of short-circuit.
      */
     fun chain(vararg nodes: Combinator): Combinator =
             ChainCombinator(extensionPointName, nodes.toList())
+
+    /**
+     * A map reduce combinator passes the input to each sub nodes sequentially,
+     * and reduce (by calling [reducer]) those outputs returned by the sub nodes
+     * to a single output, and return that output.
+     *
+     * The param [T] refers to the return type of the SAM extension point interface.
+     */
+    fun <T> mapReduce(
+            /**
+             * Sub nodes
+             */
+            nodes: List<Combinator>,
+            /**
+             * The function that reduces the results returned by [nodes] to a single result.
+             *
+             * *Note*, although each [ExtensionPointOutput] in the parameter list cannot be null,
+             * but [ExtensionPointOutput.returnValue] can be null
+             */
+            reducer: (List<T>) -> T
+    ): Combinator = MapReduceCombinator(extensionPointName, nodes, reducer)
 }
