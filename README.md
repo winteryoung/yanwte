@@ -4,9 +4,11 @@ Yanwte stands for yet another way to extend. It's a library to help you extendin
 
 Maven:
 
-Group ID|Artifact ID|Version
-----|----|----
-com.github.winteryoung|yanwte|1.0
+Name|Value
+---|---
+Group ID|com.github.winteryoung
+Artifact ID|yanwte
+Version|1.0.0
 
 # Licence
 
@@ -14,42 +16,68 @@ com.github.winteryoung|yanwte|1.0
 
 # Introduction
 
-In business programs, we typically face the problem of extending existing programs. To extend your program, you have to have a point to extend from. The standard way is to define such a point as an interface. Say we have a point that needs to calculate the maximum quantity that a person can buy.
+In business programs, we typically face the problem of extending existing programs. To extend your program, you have to have a point to extend from. The standard way is to define such a point as an interface, called extension point. Say we have an extension point that needs to calculate the maximum quantity that a person can buy.
 
-```
+```java
 public interface BuyQuantityLimit {
-  int getUnitPrice(Merchandise merchandise, User buyer);
+    Integer getQuantity(Context context, Merchandise merchandise, User buyer);
 }
 ```
 
-You may choose an implementation that returns the default value.
+You may choose an implementation that returns the default value, let's call it an extension.
 
-```
-class UnitPriceExtension implements UnitPriceExtensionPoint {
-  Money getUnitPrice(Merchandise merchandise, User buyer) {
-    return Integer.MAX_VALUE;
-  }
+```java
+class DefaultBuyQuantity implements BuyQuantityLimit {
+    public Integer getQuantity(Context context, Merchandise merchandise, User buyer) {
+        return Integer.MAX_VALUE;
+    }
 }
 ```
 
-Or you may choose an implementation that returns the quantity from a service.
+Or you may choose an extension that returns the quantity from a service.
 
-```
-class UnitPriceWithFeeExtension implements UnitPriceExtensionPoint {
-
-  Money getUnitPrice(Merchandise merchandise, User buyer) {
-    return
-  }
+```java
+class BuyQuantityFromService implements BuyQuantityLimit {
+    // some RPC service
+    private BuyQuantityLimitService service;
+  
+    public Integer getQuantity(Context context, Merchandise merchandise, User buyer) {
+        if (context....) {
+            return service.getQuantity(merchandise.toDTO(), buyer.toDTO())
+        }
+        return null;
+    }
 }
 ```
 
+The traditional way is to choose an extension based on the current runtime context. This process is done by each extension itself. The way it works is exactly the way the chain of reponsibility works.
 
+Kotlin
+```kotlin
+ExtensionPointBuilder(BuyQuantityLimit::class.java).apply {
+    tree = chain(
+            extOfClass(BuyQuantityFromService::class.java),
+            extOfClass(DefaultBuyQuantity::class.java)
+    )
+}.buildAndRegister()
 
-The traditional way is to choose an implementation based on the current runtime context. What if you cannot choose a single implementation to do all the task, what if they need to work together? To demonstrate, let's say there is another implementation that constrains, the merchandise being sold on our platform cannot be dearer than $5000. (OK, this constraint example may not be appropriate. It's more suitable for a timeout scenario, but you get the point.)
-
+val buyQuantityLimit = YanwteContainer.getExtensionPointByClass(BuyQuantityLimit::class.java)!!
+val quantity = buyQuantityLimit.getQuantity(context, merchandise, buyer)
 ```
-class UnitPriceConstraint implements UnitPriceExtensionPoint {
-  Money getUnitPrice(Merchandise merchandise, User buyer) {
-    
-  }
-}
+
+Java
+```java
+new ExtensionPointBuilder(BuyQuantityLimit.class) {{
+    setTree(chain(
+            extOfClass(BuyQuantityFromService.class),
+            extOfClass(DefaultBuyQuantity.class)
+    ));
+}}.buildAndRegister();
+
+BuyQuantityLimit buyQuantityLimit = YanwteContainer.INSTANCE.getExtensionPointByClass(BuyQuantityLimit.class);
+int quantity = buyQuantityLimit.getQuantity(context, merchandise, buyer);
+```
+
+If `BuyQuantityLimitFromService` returns a non-null value, `buyQuantityLimit` returns that value. If `BuyQuantityLimitFromService` returns null, `buyQuantityLimit` returns the value returned by `DefaultBuyQuantity`. Like chain of reponsibility, it has the effect of short-circuit.
+
+`chain` is just one of the combinators. Other combinators like `composite`, `decorate` enables you to do all kinds of composition to extensions. If you want some combinator that doesn't appear in Yanwte, [you can define your own](CustomTreeCombinator). Refer to [combintors](combinators) to see the complete list of combinators. In essence, these combinators can form a single combinator that is arbitrarily complex to suit your needs.
