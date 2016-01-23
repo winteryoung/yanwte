@@ -14,14 +14,16 @@ import java.lang.reflect.Method
  *
  * *Note*. The [build] process is expensive, because it uses reflection.
  *
+ * Parameter type [EP] refers to the SAM interface representing this extension point.
+ *
  * @author Winter Young
  * @since 2016/1/17
  */
-open class ExtensionPointBuilder(
+open class ExtensionPointBuilder<EP>(
         /**
          * The SAM interface that represents this extension point.
          */
-        val extensionPointInterface: Class<*>
+        val extensionPointInterface: Class<EP>
 ) {
     val extensionPointName: String = extensionPointInterface.name
 
@@ -61,7 +63,7 @@ open class ExtensionPointBuilder(
      * Returns the extension combinator of the given class. [extensionClass] must have a
      * parameterless constructor.
      */
-    fun extOfClass(extensionClass: Class<*>): Combinator {
+    fun extOfClass(extensionClass: Class<out EP>): Combinator {
         val extensionName = extensionClass.name
         val plugin = YanwtePlugin.getPluginByExtensionName(extensionName)
         val extPojo = plugin.getExtensionByName(extensionName)
