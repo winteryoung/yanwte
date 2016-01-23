@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.winteryoung</groupId>
     <artifactId>yanwte</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3-SNAPSHOT</version>
     <packaging>jar</packaging>
     <inceptionYear>2016</inceptionYear>
     <name>Yet Another Way To Extend</name>
@@ -114,7 +114,7 @@
         <dependency>
             <groupId>com.github.winteryoung</groupId>
             <artifactId>yanwte</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.2</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
