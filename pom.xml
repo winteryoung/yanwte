@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.winteryoung</groupId>
     <artifactId>yanwte</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
     <inceptionYear>2016</inceptionYear>
     <name>Yet Another Way To Extend</name>
@@ -20,7 +20,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jdk.version>1.8</jdk.version>
+        <jdk.version>1.6</jdk.version>
         <kotlin.version>1.0.0-beta-4584</kotlin.version>
     </properties>
 
@@ -111,6 +111,11 @@
     </build>
 
     <dependencies>
+        <dependency>
+            <groupId>com.github.winteryoung</groupId>
+            <artifactId>yanwte</artifactId>
+            <version>1.0.1</version>
+        </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>

@@ -14,12 +14,12 @@ class MapReduceCombinatorTest {
     @Test
     fun test() {
         ExtensionPointBuilder(TestExtensionPoint::class.java).apply {
-            tree = mapReduce<Integer>(listOf(
+            tree = mapReduce<Integer?>(listOf(
                     extOfClass(Extension1::class.java),
                     extOfClass(Extension2::class.java)
             )) { outputs ->
-                outputs.reduce { a, b ->
-                    val c = a.toInt() + b.toInt()
+                outputs.filter { it != null }.reduce { a, b ->
+                    val c = a!!.toInt() + b!!.toInt()
                     c as Integer
                 }
             }
@@ -31,18 +31,24 @@ class MapReduceCombinatorTest {
     }
 
     interface TestExtensionPoint {
-        fun foo(): Integer
+        fun foo(): Integer?
     }
 
     class Extension1 : TestExtensionPoint {
-        override fun foo(): Integer {
+        override fun foo(): Integer? {
             return 2 as Integer
         }
     }
 
     class Extension2 : TestExtensionPoint {
-        override fun foo(): Integer {
+        override fun foo(): Integer? {
             return 3 as Integer
+        }
+    }
+
+    class Extension3 : TestExtensionPoint {
+        override fun foo(): Integer? {
+            return null
         }
     }
 }

@@ -88,7 +88,7 @@ private fun buildProxyMethod(
         it.toDescriptor()
     }.joinToString("")
     val proxyMethodSig = "($proxyMethodParamsSig)${proxyMethod.returnType.toDescriptor()}"
-    val (argsVarIndex, outputVarIndex) = proxyMethod.parameters.size.let { offset ->
+    val (argsVarIndex, outputVarIndex) = proxyMethod.parameterTypes.size.let { offset ->
         listOf(offset + 1, offset + 2)
     }
     val extensionPointInputClass = ExtensionPointInput::class.java

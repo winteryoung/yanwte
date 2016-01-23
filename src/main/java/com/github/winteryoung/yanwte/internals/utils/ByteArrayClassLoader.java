@@ -54,7 +54,7 @@ public class ByteArrayClassLoader extends ClassLoader {
                                 ProtectionDomain protectionDomain,
                                 PersistenceHandler persistenceHandler) {
         super(parent);
-        this.typeDefinitions = new HashMap<>(typeDefinitions);
+        this.typeDefinitions = new HashMap<String, byte[]>(typeDefinitions);
         this.protectionDomain = protectionDomain;
         this.persistenceHandler = persistenceHandler;
         accessControlContext = AccessController.getContext();
