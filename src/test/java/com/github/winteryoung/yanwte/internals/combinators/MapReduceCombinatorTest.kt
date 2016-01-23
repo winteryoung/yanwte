@@ -5,11 +5,11 @@ import com.github.winteryoung.yanwte.YanwteContainer
 import org.junit.Assert
 import org.junit.Test
 
-@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 /**
  * @author Winter Young
  * @since 2016/1/23
- */
+| */
+@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 class MapReduceCombinatorTest {
     @Test
     fun test() {
