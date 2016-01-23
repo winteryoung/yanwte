@@ -1,85 +1,21 @@
 Yanwte stands for yet another way to extend. It's a library to help you extending your programs. This library is written in Kotlin, and is compatible with JDK 1.6.
 
-# Installation
+# Where Does It Come From?
 
-Maven:
+Yanwte came out of the need from the inside of Alibaba inc., the trading department. It's online trading systems are using the framework called tradespi, which is the predecestor of Yanwte. 3 years since the inception of tradespi, I felt it's time to rewrite it and open-source it to the community, so that we can share a mature thought of how to extend a complex program to everyone.
 
-```xml
-<dependency>
-  <groupId>com.github.winteryoung</groupId>
-  <artifactId>yanwte</artifactId>
-  <version>1.0.1</version>
-</dependency>
-```
+After open-sourced our trading systems inside the corporation, the systems could deliver 60+ bug fixes/features a week. The biggest system of them, could deliver 20+ bug fixes/features per week.
+
+I am still rewriting the features, starting from the core. So, more features will come out.
 
 # Licence
 
 [Apache license 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-# Introduction
+# Documentation
 
-In business programs, we typically face the problem of extending existing programs. To extend your program, you have to have a point to extend from. The standard way is to define such a point as an interface, called extension point. Say we have an extension point that needs to calculate the maximum quantity that a person can buy.
+For documentations, please see the [wiki](https://github.com/winteryoung/yanwte/wiki).
 
-```java
-public interface BuyQuantityLimit {
-    Integer getQuantity(Context context, Merchandise merchandise, User buyer);
-}
-```
+# Performance
 
-You may choose an implementation that returns the default value, let's call it an extension.
-
-```java
-class DefaultBuyQuantity implements BuyQuantityLimit {
-    public Integer getQuantity(Context context, Merchandise merchandise, User buyer) {
-        return Integer.MAX_VALUE;
-    }
-}
-```
-
-Or you may choose an extension that returns the quantity from a service.
-
-```java
-class BuyQuantityFromService implements BuyQuantityLimit {
-    // some RPC service
-    private BuyQuantityLimitService service;
-  
-    public Integer getQuantity(Context context, Merchandise merchandise, User buyer) {
-        if (context....) {
-            return service.getQuantity(merchandise.toDTO(), buyer.toDTO())
-        }
-        return null;
-    }
-}
-```
-
-The traditional way is to choose an extension based on the current runtime context. This process is done by each extension itself. The way it works is exactly the way the chain of reponsibility works.
-
-Kotlin
-```kotlin
-ExtensionPointBuilder(BuyQuantityLimit::class.java).apply {
-    tree = chain(
-            extOfClass(BuyQuantityFromService::class.java),
-            extOfClass(DefaultBuyQuantity::class.java)
-    )
-}.buildAndRegister()
-
-val buyQuantityLimit = YanwteContainer.getExtensionPointByClass(BuyQuantityLimit::class.java)!!
-val quantity = buyQuantityLimit.getQuantity(context, merchandise, buyer)
-```
-
-Java
-```java
-new ExtensionPointBuilder(BuyQuantityLimit.class) {{
-    setTree(chain(
-            extOfClass(BuyQuantityFromService.class),
-            extOfClass(DefaultBuyQuantity.class)
-    ));
-}}.buildAndRegister();
-
-BuyQuantityLimit buyQuantityLimit = YanwteContainer.INSTANCE.getExtensionPointByClass(BuyQuantityLimit.class);
-int quantity = buyQuantityLimit.getQuantity(context, merchandise, buyer);
-```
-
-If `BuyQuantityLimitFromService` returns a non-null value, `buyQuantityLimit` returns that value. If `BuyQuantityLimitFromService` returns null, `buyQuantityLimit` returns the value returned by `DefaultBuyQuantity`. Like chain of reponsibility, it has the effect of short-circuit.
-
-`chain` is just one of the combinators. Other combinators like `mapReduce` enables you to do all kinds of compositions to extensions. If you want some combinator that doesn't appear in Yanwte, [you can define your own](CustomTreeCombinator). Refer to [combintors](combinators) to see the complete list of embedded combinators. In essence, these combinators can form a single combinator that is arbitrarily complex to suit your needs.
+Tradespi has been tested by 3 tmall double 11 festivals. I believe Yanwte can achieve the same quality. To ensure the performance, Yanwte doesn't have any reflection calls and method calls are known time consuming (like `String.replace`).
