@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.winteryoung</groupId>
     <artifactId>yanwte</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
     <inceptionYear>2016</inceptionYear>
     <name>Yet Another Way To Extend</name>
