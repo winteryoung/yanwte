@@ -5,12 +5,13 @@
     <formats>
         <format>jar</format>
     </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
         <fileSet>
-            <directory>/</directory>
+            <directory>/target/dokka</directory>
             <outputDirectory>/</outputDirectory>
             <includes>
-                <include>pom.xml</include>
+                <include>**/*</include>
             </includes>
         </fileSet>
     </fileSets>

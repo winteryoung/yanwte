@@ -7,7 +7,7 @@ import com.github.winteryoung.yanwte.YanwteException
 import com.github.winteryoung.yanwte.internals.bytecode.generateExtensionExecutionProxy
 
 /**
- * A yanwte extension is an implementation to an extension point.
+ * A Yanwte extension is an implementation to an extension point.
  *
  * @author Winter Young
  * @since 2016/1/17
