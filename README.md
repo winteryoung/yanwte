@@ -1,4 +1,4 @@
-Yanwte stands for yet another way to extend. It's a library to help you extending your programs. This library is written in Kotlin, and is compatible with JDK 1.6.
+Yanwte stands for yet another way to extend. It's a library to help you extending your programs. This library is written in Kotlin, and is compatible with Java 1.6.
 
 # Where Does It Come From?
 
