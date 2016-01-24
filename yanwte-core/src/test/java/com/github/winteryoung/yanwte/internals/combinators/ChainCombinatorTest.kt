@@ -2,7 +2,6 @@ package com.github.winteryoung.yanwte.internals.combinators
 
 import com.github.winteryoung.yanwte.ExtensionPointInput
 import com.github.winteryoung.yanwte.ExtensionPointOutput
-import com.github.winteryoung.yanwte.internals.ExtensionExecution
 import com.github.winteryoung.yanwte.internals.YanwteExtension
 import org.junit.Assert
 import org.junit.Test
@@ -37,12 +36,12 @@ class ChainCombinatorTest {
             extensionName: String = "testExt",
             action: (Int) -> Int?
     ): YanwteExtension {
-        return YanwteExtension(extensionName, ExtensionExecution { input ->
+        return YanwteExtension(extensionName) { input ->
             val (args) = input
             val (arg) = args
             val i = arg as Int
             ExtensionPointOutput(action(i))
-        })
+        }
     }
 
     private fun buildExtNode(

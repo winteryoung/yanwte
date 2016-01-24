@@ -24,11 +24,11 @@ class YanwteExtensionTest {
 
     @Test
     fun testSimpleExtensionExecution() {
-        val ext = YanwteExtension("testExt", ExtensionExecution { input ->
+        val ext = YanwteExtension("testExt") { input ->
             val (args) = input
             val (arg) = args
             ExtensionPointOutput(arg as Int * 2)
-        })
+        }
         val (value) = ext(ExtensionPointInput(listOf(3)))
         Assert.assertEquals(6, value as Int)
     }

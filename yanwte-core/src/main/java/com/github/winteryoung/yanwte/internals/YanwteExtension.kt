@@ -14,13 +14,13 @@ import com.github.winteryoung.yanwte.internals.bytecode.generateExtensionExecuti
  */
 internal class YanwteExtension(
         val name: String,
-        val action: ExtensionExecution
+        val action: (ExtensionPointInput) -> ExtensionPointOutput
 ) {
     /**
      * Invokes this extension.
      */
     operator fun invoke(input: ExtensionPointInput): ExtensionPointOutput {
-        return action.execute(input)
+        return action(input)
     }
 
     companion object {
@@ -30,19 +30,7 @@ internal class YanwteExtension(
         fun fromPojo(extension: Any): YanwteExtension {
             val extClass = extension.javaClass
             val (extPointName, extName) = parseExtensionClass(extClass)
-//            val reflectiveExecution = ExtensionExecution { input ->
-//                val extPoint = YanwteContainer.getExtensionPointByName(extPointName)
-//                if (extPoint == null) {
-//                    val exMsg = "Cannot find extension point $extPointName for extension $extName"
-//                    throw YanwteException(exMsg)
-//                }
-//                val method = extPoint.method
-//
-//                val returnValue = method.invoke(extension, *input.args.toTypedArray())
-//
-//                ExtensionPointOutput(returnValue)
-//            }
-            val bytecodeExecution = ExtensionExecution { input ->
+            return YanwteExtension(extName) { input ->
                 val extPoint = YanwteContainer.getExtensionPointByName(extPointName)
                 if (extPoint == null) {
                     val exMsg = "Cannot find extension point $extPointName for extension $extName"
@@ -52,10 +40,6 @@ internal class YanwteExtension(
                 val proxy = generateExtensionExecutionProxy(extPoint, extension)
                 proxy.execute(input)
             }
-            return YanwteExtension(
-                    extName,
-                    bytecodeExecution
-            )
         }
 
         private fun isSamInterface(cls: Class<*>) = cls.isInterface && cls.declaredMethods.size == 1
