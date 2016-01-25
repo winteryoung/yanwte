@@ -36,7 +36,7 @@ class ChainCombinatorTest {
             extensionName: String = "testExt",
             action: (Int) -> Int?
     ): YanwteExtension {
-        return YanwteExtension(extensionName) { input ->
+        return YanwteExtension(extensionName, null) { input ->
             val (args) = input
             val (arg) = args
             val i = arg as Int

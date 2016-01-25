@@ -16,10 +16,10 @@ import java.lang.reflect.Method
 /*
 This function is effectively the same as
 
-public class ExtensionPointTestProxy implements TestExtensionPoint {
+public class ExtensionPointTestDelegate implements TestExtensionPoint {
   private ExtensionPoint ep;
 
-  public ExtensionPointTestProxy(ExtensionPoint ep) {
+  public ExtensionPointTestDelegate(ExtensionPoint ep) {
     this.ep = ep;
   }
 
@@ -33,11 +33,11 @@ public class ExtensionPointTestProxy implements TestExtensionPoint {
 }
  */
 /**
- * Generates proxy class for the given extension point. This proxy eliminates the need for
+ * Generates delegate class for the given extension point. This delegate eliminates the need for
  * reflective invocation. Basically, it passes all arguments from [extensionPointInterfaceClass]
  * to [extensionPoint], and passes the return value from [extensionPoint] to [extensionPointInterfaceClass].
  */
-internal fun <T> generateExtensionPointProxy(
+internal fun <T> generateExtensionPointDelegate(
         extensionPoint: ExtensionPoint,
         extensionPointInterfaceClass: Class<T>
 ): T {
@@ -45,19 +45,19 @@ internal fun <T> generateExtensionPointProxy(
         throw IllegalArgumentException()
     }
 
-    val (name, bytes) = generateExtensionPointProxyBytes(extensionPoint, extensionPointInterfaceClass)
-    return loadExtensionPointProxyInstance(name, bytes, extensionPoint)
+    val (name, bytes) = generateExtensionPointDelegateBytes(extensionPoint, extensionPointInterfaceClass)
+    return loadExtensionPointDelegateInstance(name, bytes, extensionPoint)
 }
 
-private fun <T> generateExtensionPointProxyBytes(
+private fun <T> generateExtensionPointDelegateBytes(
         extensionPoint: ExtensionPoint,
         extensionPointInterfaceClass: Class<T>
 ): Pair<String, ByteArray> {
     val extensionPointClass = ExtensionPoint::class.java
-    val proxyMethod = extensionPoint.method
-    val generatedType = Type.getObjectType("${extensionPointInterfaceClass.toInternalName()}__yanwteProxy__")
+    val delegateMethod = extensionPoint.method
+    val generatedType = Type.getObjectType("${extensionPointInterfaceClass.toInternalName()}__yanwteDelegate__")
 
-    checkProxyMethodTypeIntegrity(proxyMethod, extensionPointInterfaceClass)
+    checkDelegateMethodTypeIntegrity(delegateMethod, extensionPointInterfaceClass)
 
     val cw = ClassWriter(COMPUTE_MAXS)
     cw.visit(
@@ -71,30 +71,30 @@ private fun <T> generateExtensionPointProxyBytes(
 
     buildFields(cw, extensionPointClass)
     buildConstructor(cw, extensionPointClass, generatedType)
-    buildProxyMethod(cw, proxyMethod, extensionPointClass, generatedType)
+    buildDelegateMethod(cw, delegateMethod, extensionPointClass, generatedType)
 
     cw.visitEnd()
 
-    return "${extensionPointInterfaceClass.name}__yanwteProxy__" to cw.toByteArray()
+    return "${extensionPointInterfaceClass.name}__yanwteDelegate__" to cw.toByteArray()
 }
 
-private fun buildProxyMethod(
+private fun buildDelegateMethod(
         cw: ClassWriter,
-        proxyMethod: Method,
+        delegateMethod: Method,
         extensionPointClass: Class<ExtensionPoint>,
         generatedType: Type
 ) {
-    val proxyMethodParamsSig = proxyMethod.parameterTypes.map {
+    val delegateMethodParamsSig = delegateMethod.parameterTypes.map {
         it.toDescriptor()
     }.joinToString("")
-    val proxyMethodSig = "($proxyMethodParamsSig)${proxyMethod.returnType.toDescriptor()}"
-    val (argsVarIndex, outputVarIndex) = proxyMethod.parameterTypes.size.let { offset ->
+    val delegateMethodSig = "($delegateMethodParamsSig)${delegateMethod.returnType.toDescriptor()}"
+    val (argsVarIndex, outputVarIndex) = delegateMethod.parameterTypes.size.let { offset ->
         listOf(offset + 1, offset + 2)
     }
     val extensionPointInputClass = ExtensionPointInput::class.java
     val extensionPointOutputClass = ExtensionPointOutput::class.java
 
-    cw.visitMethod(ACC_PUBLIC, proxyMethod.name, proxyMethodSig, null, null).run {
+    cw.visitMethod(ACC_PUBLIC, delegateMethod.name, delegateMethodSig, null, null).run {
         visitCode()
 
         val l0 = Label() // args = ArrayList()
@@ -106,7 +106,7 @@ private fun buildProxyMethod(
 
         val l1 = Label() // args.add(param)
         visitLabel(l1)
-        proxyMethod.parameterTypes.forEachIndexed { i, paramType ->
+        delegateMethod.parameterTypes.forEachIndexed { i, paramType ->
             visitVarInsn(ALOAD, argsVarIndex)
             visitVarInsn(ALOAD, i + 1)
             visitMethodInsn(INVOKEVIRTUAL, "java/util/ArrayList", "add", "(Ljava/lang/Object;)Z", false)
@@ -157,10 +157,10 @@ private fun buildProxyMethod(
         )
 
         // return output.returnValue
-        if (proxyMethod.returnType == Void.TYPE) {
+        if (delegateMethod.returnType == Void.TYPE) {
             visitInsn(RETURN)
         } else {
-            visitTypeInsn(CHECKCAST, proxyMethod.returnType.toInternalName())
+            visitTypeInsn(CHECKCAST, delegateMethod.returnType.toInternalName())
             visitInsn(ARETURN)
         }
 
@@ -170,7 +170,7 @@ private fun buildProxyMethod(
         visitLocalVariable("this", generatedType.descriptor, null, l0, l2, 0)
 
         // define arguments
-        proxyMethod.parameterTypes.forEachIndexed { i, paramType ->
+        delegateMethod.parameterTypes.forEachIndexed { i, paramType ->
             visitLocalVariable("arg$i", paramType.toDescriptor(), null, l0, l2, i + 1)
         }
 
@@ -197,8 +197,8 @@ private fun buildProxyMethod(
     }
 }
 
-fun checkProxyMethodTypeIntegrity(proxyMethod: Method, extensionPointInterfaceClass: Class<*>) {
-    proxyMethod.parameterTypes.toArrayList().apply { add(proxyMethod.returnType) }.forEach { type ->
+fun checkDelegateMethodTypeIntegrity(delegateMethod: Method, extensionPointInterfaceClass: Class<*>) {
+    delegateMethod.parameterTypes.toArrayList().apply { add(delegateMethod.returnType) }.forEach { type ->
         if (type.isPrimitive && type != Void.TYPE) {
             throw YanwteException("Primitives are not supported: ${extensionPointInterfaceClass.name}")
         }

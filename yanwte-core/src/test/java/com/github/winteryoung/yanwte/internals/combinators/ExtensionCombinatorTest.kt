@@ -13,7 +13,7 @@ import org.junit.Test
 class ExtensionCombinatorTest {
     @Test
     fun testNormal() {
-        val node = ExtensionCombinator("testExtPoint", YanwteExtension("testExt") { input ->
+        val node = ExtensionCombinator("testExtPoint", YanwteExtension("testExt", null) { input ->
             val (args) = input
             val (arg) = args
             ExtensionPointOutput(arg as Int * 3)

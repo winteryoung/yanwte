@@ -2,7 +2,9 @@ package com.github.winteryoung.yanwte
 
 import com.github.winteryoung.yanwte.internals.ExtensionPoint
 import com.github.winteryoung.yanwte.internals.YanwteExtension
-import com.github.winteryoung.yanwte.internals.bytecode.generateExtensionPointProxy
+import com.github.winteryoung.yanwte.internals.bytecode.generateExtensionPointDelegate
+import com.google.common.cache.Cache
+import com.google.common.cache.CacheBuilder
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -18,14 +20,28 @@ object YanwteContainer {
     private val nameToExtension = ConcurrentHashMap<String, YanwteExtension>()
 
     /**
+     * POJO extension to extension map.
+     */
+    private val pojoExtToExt = ConcurrentHashMap<Any, YanwteExtension>()
+
+    /**
      * Extension point name to instance map.
      */
     private val nameToExtPoint = ConcurrentHashMap<String, ExtensionPoint>()
 
     /**
-     * Extension point to its corresponding POJO proxy that delegates the SAM call to it.
+     * Data extension point to data extensions map. The value is the second level map.
+     * The second level map's key is the extension space name. The final value is
+     * the data extension to the data extension point.
      */
-    private val extPointToProxy = ConcurrentHashMap<ExtensionPoint, Any>()
+    private val dataExtensionPointToExtensions: Cache<Any, ConcurrentHashMap<String, Any>> =
+            CacheBuilder.newBuilder().weakKeys().build()
+
+    /**
+     * Extension space name to data initializer map.
+     */
+    private val extSpaceNameToDataExtInitializer: ConcurrentHashMap<String, YanwteDataExtensionInitializer> =
+            ConcurrentHashMap()
 
     /**
      * Clear this container.
@@ -33,6 +49,31 @@ object YanwteContainer {
     internal fun clear() {
         nameToExtension.clear()
         nameToExtPoint.clear()
+        dataExtensionPointToExtensions.cleanUp()
+        extSpaceNameToDataExtInitializer.clear()
+    }
+
+    internal fun registerDataExtInitializer(extSpaceName: String, dataExtInitializer: YanwteDataExtensionInitializer) {
+        extSpaceNameToDataExtInitializer[extSpaceName] = dataExtInitializer
+    }
+
+    internal fun getDataExtInitializer(extSpaceName: String): YanwteDataExtensionInitializer? {
+        return extSpaceNameToDataExtInitializer[extSpaceName]
+    }
+
+    internal fun registerDataExtension(dataExtensionPoint: Any, extensionSpaceName: String, dataExtension: Any) {
+        dataExtensionPointToExtensions.get(dataExtensionPoint) {
+            ConcurrentHashMap<String, Any>().apply {
+                this[extensionSpaceName] = dataExtension
+            }
+        }
+    }
+
+    internal fun getDataExtension(dataExtensionPoint: Any, extensionSpaceName: String): Any? {
+        val secMap = dataExtensionPointToExtensions.get(dataExtensionPoint) {
+            ConcurrentHashMap()
+        }
+        return secMap[extensionSpaceName]
     }
 
     /**
@@ -40,6 +81,7 @@ object YanwteContainer {
      */
     private fun registerYanwteExtension(extension: YanwteExtension) {
         nameToExtension[extension.name] = extension
+        pojoExtToExt[extension.pojoExtension!!] = extension
     }
 
     /**
@@ -53,7 +95,7 @@ object YanwteContainer {
      * Register the given extension point. This process registers all the dependent extensions
      * of the given extension point.
      */
-    fun registerExtensionPoint(extensionPoint: ExtensionPoint) {
+    internal fun registerExtensionPoint(extensionPoint: ExtensionPoint) {
         nameToExtPoint[extensionPoint.name] = extensionPoint
 
         extensionPoint.combinator.collectDependentExtensions().forEach {
@@ -68,24 +110,27 @@ object YanwteContainer {
         return nameToExtPoint[name]
     }
 
-
     /**
      * Returns the POJO extension point instance by the given POJO extension point
      * interface class.
      */
+    @Suppress("UNCHECKED_CAST")
     fun <T : Any> getExtensionPointByClass(extensionPointInterfaceClass: Class<T>): T? {
         val extPointName = extensionPointInterfaceClass.name
         val extPoint = nameToExtPoint[extPointName]
                 ?: throw YanwteException("Cannot find extension point with name $extPointName")
 
-        extPointToProxy[extPoint]?.let {
-            @Suppress("UNCHECKED_CAST")
+        extPoint.pojoExtensionPoint?.let {
             return it as T
         }
 
-        val proxy = generateExtensionPointProxy(extPoint, extensionPointInterfaceClass)
-        extPointToProxy[extPoint] = proxy
+        generateExtensionPointDelegate(extPoint, extensionPointInterfaceClass).let { delegate ->
+            extPoint.pojoExtensionPoint = delegate
+            return delegate
+        }
+    }
 
-        return proxy
+    internal fun getExtensionByPojo(extension: Any): YanwteExtension? {
+        return pojoExtToExt[extension]
     }
 }

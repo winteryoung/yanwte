@@ -15,8 +15,8 @@ import java.lang.reflect.Method
 /*
 This function is effectively the same as
 
-public class ExtensionExecutionProxy implements ExtensionExecution {
-    public ExtensionExecutionProxy(TestExtensionPoint target) {
+public class ExtensionExecutionDelegate implements ExtensionExecution {
+    public ExtensionExecutionDelegate(TestExtensionPoint target) {
         this.target = target;
     }
 
@@ -31,9 +31,9 @@ public class ExtensionExecutionProxy implements ExtensionExecution {
 }
 */
 /**
- * Generates an extension execution proxy from the given extension instance.
+ * Generates an extension execution delegate from the given extension instance.
  */
-internal fun generateExtensionExecutionProxy(
+internal fun generateExtensionExecutionDelegate(
         extensionPoint: ExtensionPoint,
         extension: Any
 ): ExtensionExecution {
@@ -41,19 +41,19 @@ internal fun generateExtensionExecutionProxy(
         throw IllegalArgumentException()
     }
 
-    val (name, bytes) = generateExtensionExecutionProxyBytes(extensionPoint)
-    return loadExtensionPointProxyInstance(name, bytes, extension)
+    val (name, bytes) = generateExtensionExecutionDelegateBytes(extensionPoint)
+    return loadExtensionPointDelegateInstance(name, bytes, extension)
 }
 
-private fun generateExtensionExecutionProxyBytes(
+private fun generateExtensionExecutionDelegateBytes(
         extensionPoint: ExtensionPoint
 ): Pair<String, ByteArray> {
     val extensionPointInterfaceClass = extensionPoint.samInterface
     val extensionExecutionClass = ExtensionExecution::class.java
-    val proxyMethod = extensionPoint.method
-    val generatedType = Type.getObjectType("${extensionPoint.samInterface.toInternalName()}__yanwteProxy__")
+    val delegateMethod = extensionPoint.method
+    val generatedType = Type.getObjectType("${extensionPoint.samInterface.toInternalName()}__yanwteDelegate__")
 
-    checkProxyMethodTypeIntegrity(proxyMethod, extensionPointInterfaceClass)
+    checkDelegateMethodTypeIntegrity(delegateMethod, extensionPointInterfaceClass)
 
     val cw = ClassWriter(ClassWriter.COMPUTE_MAXS)
     cw.visit(
@@ -67,23 +67,23 @@ private fun generateExtensionExecutionProxyBytes(
 
     buildFields(cw, extensionPointInterfaceClass)
     buildConstructor(cw, extensionPointInterfaceClass, generatedType)
-    buildExecuteMethod(cw, proxyMethod, extensionPointInterfaceClass, generatedType)
+    buildExecuteMethod(cw, delegateMethod, extensionPointInterfaceClass, generatedType)
 
     cw.visitEnd()
 
-    return "${extensionPointInterfaceClass.name}__yanwteProxy__" to cw.toByteArray()
+    return "${extensionPointInterfaceClass.name}__yanwteDelegate__" to cw.toByteArray()
 }
 
 private fun buildExecuteMethod(
         cw: ClassWriter,
-        proxyMethod: Method,
+        delegateMethod: Method,
         extensionPointInterfaceClass: Class<*>,
         generatedType: Type
 ) {
-    val proxyMethodParamsSig = proxyMethod.parameterTypes.map {
+    val delegateMethodParamsSig = delegateMethod.parameterTypes.map {
         it.toDescriptor()
     }.joinToString("")
-    val proxyMethodSig = "($proxyMethodParamsSig)${proxyMethod.returnType.toDescriptor()}"
+    val delegateMethodSig = "($delegateMethodParamsSig)${delegateMethod.returnType.toDescriptor()}"
     val extensionPointInputClass = ExtensionPointInput::class.java
     val extensionPointOutputClass = ExtensionPointOutput::class.java
 
@@ -117,7 +117,7 @@ private fun buildExecuteMethod(
                 "target",
                 extensionPointInterfaceClass.toDescriptor()
         )
-        proxyMethod.parameterTypes.forEachIndexed { i, paramType ->
+        delegateMethod.parameterTypes.forEachIndexed { i, paramType ->
             visitVarInsn(ALOAD, 2)
             visitLdcInsn(i)
             visitMethodInsn(INVOKEINTERFACE, "java/util/List", "get", "(I)Ljava/lang/Object;", true)
@@ -126,11 +126,11 @@ private fun buildExecuteMethod(
         visitMethodInsn(
                 INVOKEINTERFACE,
                 extensionPointInterfaceClass.toInternalName(),
-                proxyMethod.name,
-                proxyMethodSig,
+                delegateMethod.name,
+                delegateMethodSig,
                 true
         )
-        if (proxyMethod.returnType != Void.TYPE) {
+        if (delegateMethod.returnType != Void.TYPE) {
             visitVarInsn(ASTORE, 3)
         }
 
@@ -138,7 +138,7 @@ private fun buildExecuteMethod(
         visitLabel(l2)
         visitTypeInsn(NEW, extensionPointOutputClass.toInternalName())
         visitInsn(DUP)
-        if (proxyMethod.returnType == Void.TYPE) {
+        if (delegateMethod.returnType == Void.TYPE) {
             visitInsn(ACONST_NULL)
         } else {
             visitVarInsn(ALOAD, 3)
@@ -157,8 +157,8 @@ private fun buildExecuteMethod(
         visitLocalVariable("this", generatedType.descriptor, null, l0, l3, 0)
         visitLocalVariable("input", extensionPointInputClass.toDescriptor(), null, l0, l3, 1)
         visitLocalVariable("args", "Ljava/util/List;", "Ljava/util/List<Ljava/lang/Object;>;", l1, l3, 2)
-        if (proxyMethod.returnType != Void.TYPE) {
-            visitLocalVariable("value", proxyMethod.returnType.toDescriptor(), null, l2, l3, 3)
+        if (delegateMethod.returnType != Void.TYPE) {
+            visitLocalVariable("value", delegateMethod.returnType.toDescriptor(), null, l2, l3, 3)
         }
 
         visitMaxs(0, 0)

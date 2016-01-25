@@ -1,5 +1,6 @@
-package com.github.winteryoung.yanwte;
+package apiAcceptanceTests.extensionPoint;
 
+import com.github.winteryoung.yanwte.ExtensionPointBuilder;
 import kotlin.jvm.functions.Function1;
 import org.junit.Test;
 

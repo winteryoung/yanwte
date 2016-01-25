@@ -7,7 +7,7 @@ import java.util.*
  * Both extension point proxy and extension execution proxy have the same instance
  * creation process. So this method creates any one of them.
  */
-internal fun <T> loadExtensionPointProxyInstance(
+internal fun <T> loadExtensionPointDelegateInstance(
         name: String,
         bytes: ByteArray,
         constructorArg: Any

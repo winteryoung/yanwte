@@ -1,4 +1,4 @@
-package com.github.winteryoung.yanwte;
+package apiAcceptanceTests.extensionPoint;
 
 public class TestExtension implements TestExtensionPoint {
     @Override

@@ -24,7 +24,7 @@ class YanwteExtensionTest {
 
     @Test
     fun testSimpleExtensionExecution() {
-        val ext = YanwteExtension("testExt") { input ->
+        val ext = YanwteExtension("testExt", null) { input ->
             val (args) = input
             val (arg) = args
             ExtensionPointOutput(arg as Int * 2)

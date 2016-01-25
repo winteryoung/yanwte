@@ -27,6 +27,12 @@ internal class ExtensionPoint(
         val method: Method
 ) {
     private var _combinator: Combinator = EmptyCombinator(name)
+
+    /**
+     * The POJO delegate corresponding to this extension point.
+     */
+    internal var pojoExtensionPoint: Any? = null
+
     /**
      * Extension tree.
      */

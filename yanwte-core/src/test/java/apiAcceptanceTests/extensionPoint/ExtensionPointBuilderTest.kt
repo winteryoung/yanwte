@@ -1,5 +1,8 @@
-package com.github.winteryoung.yanwte
+package apiAcceptanceTests.extensionPoint
 
+import com.github.winteryoung.yanwte.ExtensionPointBuilder
+import com.github.winteryoung.yanwte.ExtensionPointInput
+import com.github.winteryoung.yanwte.YanwteContainer
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
