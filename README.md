@@ -1,4 +1,4 @@
-Yanwte stands for yet another way to extend. It's a library to help you extending your programs. This library is written in Kotlin, and is compatible with JDK 1.6.
+Yanwte stands for yet another way to extend. It's a library to help you extending your programs. This library is written in Kotlin, and is compatible with Java 6.
 
 # Where Does It Come From?
 
@@ -18,4 +18,4 @@ For documentations, please see the [wiki](https://github.com/winteryoung/yanwte/
 
 # Performance
 
-Tradespi has been tested with 3 tmall double 11 festivals up to 2016. I believe Yanwte can achieve the same quality. To ensure the performance, Yanwte doesn't have any reflection calls and method calls are known time consuming (like `String.replace`).
+Tradespi has been tested with 3 tmall double 11 festivals up to 2016. I believe Yanwte can achieve the same quality. To ensure the performance, Yanwte doesn't have any reflection calls and method calls that are known time consuming (like `String.replace`).
