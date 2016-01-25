@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.winteryoung</groupId>
     <artifactId>yanwte</artifactId>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.2.0-beta-1</version>
     <packaging>pom</packaging>
     <inceptionYear>2016</inceptionYear>
     <description>A library to help extending your programs.</description>
@@ -144,6 +144,12 @@
             <artifactId>junit</artifactId>
             <version>4.12</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>5.0.4</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
