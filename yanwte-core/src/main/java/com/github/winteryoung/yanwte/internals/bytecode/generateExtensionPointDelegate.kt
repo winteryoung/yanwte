@@ -197,7 +197,7 @@ private fun buildDelegateMethod(
     }
 }
 
-fun checkDelegateMethodTypeIntegrity(delegateMethod: Method, extensionPointInterfaceClass: Class<*>) {
+internal fun checkDelegateMethodTypeIntegrity(delegateMethod: Method, extensionPointInterfaceClass: Class<*>) {
     delegateMethod.parameterTypes.toArrayList().apply { add(delegateMethod.returnType) }.forEach { type ->
         if (type.isPrimitive && type != Void.TYPE) {
             throw YanwteException("Primitives are not supported: ${extensionPointInterfaceClass.name}")
