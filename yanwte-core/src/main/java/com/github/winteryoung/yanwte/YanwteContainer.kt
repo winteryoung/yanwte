@@ -63,17 +63,18 @@ object YanwteContainer {
 
     internal fun registerDataExtension(dataExtensionPoint: Any, extensionSpaceName: String, dataExtension: Any) {
         dataExtensionPointToExtensions.get(dataExtensionPoint) {
-            ConcurrentHashMap<String, Any>().apply {
-                this[extensionSpaceName] = dataExtension
-            }
+            ConcurrentHashMap()
+        }.let { secMap ->
+            secMap[extensionSpaceName] = dataExtension
         }
     }
 
     internal fun getDataExtension(dataExtensionPoint: Any, extensionSpaceName: String): Any? {
-        val secMap = dataExtensionPointToExtensions.get(dataExtensionPoint) {
+        return dataExtensionPointToExtensions.get(dataExtensionPoint) {
             ConcurrentHashMap()
+        }.let { secMap ->
+            secMap[extensionSpaceName]
         }
-        return secMap[extensionSpaceName]
     }
 
     /**
