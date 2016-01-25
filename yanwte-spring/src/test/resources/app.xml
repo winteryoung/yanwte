@@ -3,7 +3,7 @@
         "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
 <beans>
     <bean class="com.github.winteryoung.yanwte.YanwteSpringHook">
-        <property name="basePackage" value="com.github.winteryoung.kotlintest"/>
+        <property name="basePackage" value="springtest"/>
     </bean>
     <bean class="springtest.DefaultBuyQuantity"/>
 </beans>
