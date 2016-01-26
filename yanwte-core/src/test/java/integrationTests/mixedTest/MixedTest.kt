@@ -3,7 +3,8 @@ package integrationTests.mixedTest
 import com.github.winteryoung.yanwte.DataExtensionPoint
 import com.github.winteryoung.yanwte.ExtensionPointBuilder
 import com.github.winteryoung.yanwte.YanwteContainer
-import com.github.winteryoung.yanwte.YanwteDataExtensionInitializer
+import integrationTests.mixedTest.extspace1.TestExtension1
+import integrationTests.mixedTest.extspace2.TestExtension2
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -57,37 +58,3 @@ interface TestExtensionPoint {
     fun foo(testData: TestData): String?
 }
 
-class TestExtension1 : TestExtensionPoint {
-    override fun foo(testData: TestData): String? {
-        val testDataExt = testData.getDataExtension<TestDataExt>()!!
-        return testDataExt.i.let { i ->
-            if (i % 2 == 0) i + 1 else null
-        }?.let {
-            it.toString()
-        }
-    }
-}
-
-class TestExtension2 : TestExtensionPoint {
-    override fun foo(testData: TestData): String? {
-        val testDataExt = testData.getDataExtension<TestDataExt>()!!
-        return testDataExt.i.let { i ->
-            if (i % 2 != 0) i - 1 else null
-        }?.let {
-            it.toString()
-        }
-    }
-}
-
-class DataExtensionInitializer : YanwteDataExtensionInitializer() {
-    override fun initialize(dataExtensionPoint: DataExtensionPoint): Any? {
-        return when (dataExtensionPoint) {
-            is TestData -> {
-                TestDataExt(dataExtensionPoint.i)
-            }
-            else -> {
-                null
-            }
-        }
-    }
-}

@@ -14,14 +14,26 @@ import com.github.winteryoung.yanwte.internals.utils.onNull
  */
 interface DataExtensionPoint {
     /**
-     * Returns the data extension bound to the extension space calculated
-     * from the current running extension of the current thread.
+     * Returns the data extension bound to the current extension space.
+     * The current extension space is calculated from the current running
+     * extension of the current thread.
      */
     fun <T> getDataExtension(): T? {
         return YanwteRuntime.currentRunningExtension!!.let { extension ->
             extension.extensionSpaceName.let { extSpaceName ->
                 getDataExtension<T>(extSpaceName, extension)
             }
+        }
+    }
+
+    /**
+     * Returns the data extension bound to the given extension space.
+     * The extension space corresponding to [extSpaceName] must have authorized
+     * this extension space. Otherwise, an [YanwteException] will be thrown.
+     */
+    fun <T> getDataExtension(extSpaceName: String): T? {
+        return YanwteRuntime.currentRunningExtension!!.let { extension ->
+            getDataExtension<T>(extSpaceName, extension)
         }
     }
 }
