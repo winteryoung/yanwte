@@ -9,7 +9,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext
 class SpringTest {
     @Test
     fun test() {
-        ClassPathXmlApplicationContext("app.xml").start()
+        ClassPathXmlApplicationContext("yanwte.xml").start()
 
         ExtensionPointBuilder(BuyQuantityLimit::class.java).apply {
             tree = extOfClass(DefaultBuyQuantity::class.java)
