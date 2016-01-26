@@ -1,5 +1,7 @@
 package com.github.winteryoung.yanwte
 
+import com.github.winteryoung.yanwte.internals.YanwteRuntime
+
 /**
  * A class implementing data extension point means it is able to extend its data.
  * Compared to `ExtensionPoint`, you can think of that as a kind of behavioral
@@ -14,11 +16,11 @@ interface DataExtensionPoint {
      * from the given extension.
      */
     @Suppress("UNCHECKED_CAST")
-    fun <T> getDataExtension(extension: Any): T? {
-        return YanwteContainer.getExtensionByPojo(extension)!!.let {
-            it.extensionSpaceName.let { extSpaceName ->
+    fun <T> getDataExtension(): T? {
+        return YanwteRuntime.currentRunningExtension!!.let { extension ->
+            extension.extensionSpaceName.let { extSpaceName ->
                 YanwteContainer.getDataExtension(this, extSpaceName).let { dataExt ->
-                    dataExt as T ?: initDataExt(extSpaceName, extension, this)?.let { newDataExt ->
+                    dataExt as T ?: initDataExt(extSpaceName, extension.pojoExtension!!, this)?.let { newDataExt ->
                         YanwteContainer.registerDataExtension(this, extSpaceName, newDataExt)
                         newDataExt as T
                     }

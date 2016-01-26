@@ -59,7 +59,7 @@ interface TestExtensionPoint {
 
 class TestExtension1 : TestExtensionPoint {
     override fun foo(testData: TestData): String? {
-        val testDataExt = testData.getDataExtension<TestDataExt>(this)!!
+        val testDataExt = testData.getDataExtension<TestDataExt>()!!
         return testDataExt.i.let { i ->
             if (i % 2 == 0) i + 1 else null
         }?.let {
@@ -70,7 +70,7 @@ class TestExtension1 : TestExtensionPoint {
 
 class TestExtension2 : TestExtensionPoint {
     override fun foo(testData: TestData): String? {
-        val testDataExt = testData.getDataExtension<TestDataExt>(this)!!
+        val testDataExt = testData.getDataExtension<TestDataExt>()!!
         return testDataExt.i.let { i ->
             if (i % 2 != 0) i - 1 else null
         }?.let {

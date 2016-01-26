@@ -33,7 +33,12 @@ internal class YanwteExtension(
      * Invokes this extension.
      */
     operator fun invoke(input: ExtensionPointInput): ExtensionPointOutput {
-        return action(input)
+        try {
+            YanwteRuntime.currentRunningExtension = this
+            return action(input)
+        } finally {
+            YanwteRuntime.currentRunningExtension = null
+        }
     }
 
     companion object {
