@@ -79,7 +79,7 @@ class TestExtension2 : TestExtensionPoint {
     }
 }
 
-class DataExtensionInitializer : YanwteDataExtensionInitializer {
+class DataExtensionInitializer : YanwteDataExtensionInitializer() {
     override fun initialize(dataExtensionPoint: DataExtensionPoint): Any? {
         return when (dataExtensionPoint) {
             is TestData -> {

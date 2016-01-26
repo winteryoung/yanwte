@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Winter Young
  * @since 2016/1/25
  */
-public class DataExtensionInitializer implements YanwteDataExtensionInitializer {
+public class DataExtensionInitializer extends YanwteDataExtensionInitializer {
     @NotNull
     @Override
     public Object initialize(@NotNull DataExtensionPoint dataExtensionPoint) {

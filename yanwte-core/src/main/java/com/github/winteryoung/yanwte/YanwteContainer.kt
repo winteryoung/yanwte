@@ -20,11 +20,6 @@ object YanwteContainer {
     private val nameToExtension = ConcurrentHashMap<String, YanwteExtension>()
 
     /**
-     * POJO extension to extension map.
-     */
-    private val pojoExtToExt = ConcurrentHashMap<Any, YanwteExtension>()
-
-    /**
      * Extension point name to instance map.
      */
     private val nameToExtPoint = ConcurrentHashMap<String, ExtensionPoint>()
@@ -44,6 +39,11 @@ object YanwteContainer {
             ConcurrentHashMap()
 
     /**
+     * Extension space name to instance map.
+     */
+    private val nameToExtSpace = ConcurrentHashMap<String, YanwteExtensionSpace>()
+
+    /**
      * Clear this container.
      */
     internal fun clear() {
@@ -51,6 +51,7 @@ object YanwteContainer {
         nameToExtPoint.clear()
         dataExtensionPointToExtensions.cleanUp()
         extSpaceNameToDataExtInitializer.clear()
+        nameToExtSpace.clear()
     }
 
     internal fun registerDataExtInitializer(extSpaceName: String, dataExtInitializer: YanwteDataExtensionInitializer) {
@@ -82,7 +83,7 @@ object YanwteContainer {
      */
     private fun registerYanwteExtension(extension: YanwteExtension) {
         nameToExtension[extension.name] = extension
-        pojoExtToExt[extension.pojoExtension!!] = extension
+        registerExtensionSpace(extension.extensionSpaceName, extension.extensionSpace)
     }
 
     /**
@@ -131,7 +132,17 @@ object YanwteContainer {
         }
     }
 
-    internal fun getExtensionByPojo(extension: Any): YanwteExtension? {
-        return pojoExtToExt[extension]
+    /**
+     * Returns the extension space instance of the given name.
+     */
+    internal fun getExtensionSpaceByName(name: String): YanwteExtensionSpace? {
+        return nameToExtSpace[name]
+    }
+
+    /**
+     * Register the extension space with the given name.
+     */
+    internal fun registerExtensionSpace(name: String, space: YanwteExtensionSpace) {
+        nameToExtSpace[name] = space
     }
 }

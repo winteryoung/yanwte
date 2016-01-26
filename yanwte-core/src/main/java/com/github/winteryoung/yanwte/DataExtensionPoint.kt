@@ -1,6 +1,8 @@
 package com.github.winteryoung.yanwte
 
+import com.github.winteryoung.yanwte.internals.YanwteExtension
 import com.github.winteryoung.yanwte.internals.YanwteRuntime
+import com.github.winteryoung.yanwte.internals.utils.onNull
 
 /**
  * A class implementing data extension point means it is able to extend its data.
@@ -13,42 +15,71 @@ import com.github.winteryoung.yanwte.internals.YanwteRuntime
 interface DataExtensionPoint {
     /**
      * Returns the data extension bound to the extension space calculated
-     * from the given extension.
+     * from the current running extension of the current thread.
      */
-    @Suppress("UNCHECKED_CAST")
     fun <T> getDataExtension(): T? {
         return YanwteRuntime.currentRunningExtension!!.let { extension ->
             extension.extensionSpaceName.let { extSpaceName ->
-                YanwteContainer.getDataExtension(this, extSpaceName).let { dataExt ->
-                    dataExt as T ?: initDataExt(extSpaceName, extension.pojoExtension!!, this)?.let { newDataExt ->
-                        YanwteContainer.registerDataExtension(this, extSpaceName, newDataExt)
-                        newDataExt as T
-                    }
-                }
+                getDataExtension<T>(extSpaceName, extension)
+            }
+        }
+    }
+}
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> DataExtensionPoint.getDataExtension(extSpaceName: String, extension: YanwteExtension): T? {
+    YanwteContainer.getExtensionSpaceByName(extSpaceName).onNull {
+        throw YanwteException("Extension space name [$extSpaceName] not registered")
+    }?.let { srcSpace ->
+        extension.extensionSpace.let { targetSpace ->
+            if (srcSpace.isAuthorizedTo(targetSpace.name).not()) {
+                throw YanwteException("${targetSpace.name} has not been authorized by ${srcSpace.name}")
             }
         }
     }
 
-    private fun initDataExt(extSpaceName: String, extension: Any, dataExtensionPoint: DataExtensionPoint): Any? {
-        return getDataExtInitializer(extSpaceName, extension)?.let { dataExtInitializer ->
-            dataExtInitializer.initialize(dataExtensionPoint)
-        }
+    YanwteContainer.getDataExtension(this, extSpaceName)?.let {
+        return it as T
     }
 
-    private fun getDataExtInitializer(extSpaceName: String, extension: Any): YanwteDataExtensionInitializer? {
-        YanwteContainer.getDataExtInitializer(extSpaceName)?.let {
-            return it
-        }
+    return initDataExt(extSpaceName, extension.pojoExtension!!, this)?.let {
+        YanwteContainer.registerDataExtension(this, extSpaceName, it)
+        it as T
+    }
+}
 
-        return extension.javaClass.classLoader.let {
-            it.loadClass("$extSpaceName.DataExtensionInitializer").let {
-                @Suppress("UNCHECKED_CAST")
-                val initClass = it as Class<YanwteDataExtensionInitializer>
-                initClass.newInstance().let { initializer ->
-                    YanwteContainer.registerDataExtInitializer(extSpaceName, initializer)
-                }
-                YanwteContainer.getDataExtInitializer(extSpaceName)
+@Suppress("UNCHECKED_CAST")
+private fun initDataExt(extSpaceName: String, extension: Any, dataExtensionPoint: DataExtensionPoint): Any? {
+    return getDataExtInitializer(extSpaceName) { extSpaceName ->
+        extension.javaClass.classLoader.let {
+            try {
+                it.loadClass("$extSpaceName.DataExtensionInitializer") as Class<YanwteDataExtensionInitializer>
+            } catch (e: ClassNotFoundException) {
+                null
             }
         }
+    }.let { dataExtInitializer ->
+        dataExtInitializer.initialize(dataExtensionPoint)
+    }
+}
+
+internal fun getDataExtInitializer(
+        extSpaceName: String,
+        initializerClassLoader: (String) -> Class<YanwteDataExtensionInitializer>?
+): YanwteDataExtensionInitializer {
+    YanwteContainer.getDataExtInitializer(extSpaceName)?.let {
+        return it
+    }
+
+    initializerClassLoader(extSpaceName)?.let {
+        it.newInstance().let {
+            YanwteContainer.registerDataExtInitializer(extSpaceName, it)
+        }
+        return YanwteContainer.getDataExtInitializer(extSpaceName)!!
+    }
+
+    return EmptyDataExtensionInitializer.let {
+        YanwteContainer.registerDataExtInitializer(extSpaceName, it)
+        it
     }
 }
