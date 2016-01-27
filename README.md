@@ -14,6 +14,10 @@ After open-sourced our trading systems inside the corporation, the systems could
 
 For documentations, please see the [wiki](https://github.com/winteryoung/yanwte/wiki).
 
+# QA
+
+If you have questions, you can post a question on [StackOverflow](https://www.stackoverflow.com) tagged with "yanwte".
+
 # Performance
 
 Tradespi has been tested with 3 tmall double 11 festivals up to 2016. I believe Yanwte can achieve the same quality. To ensure the performance, Yanwte doesn't have any reflection calls and method calls that are known time consuming (like `String.replace`) on the hot code execution path.
