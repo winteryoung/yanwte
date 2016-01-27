@@ -6,8 +6,6 @@ Yanwte came out of the need from the inside of Alibaba inc., the trading departm
 
 After open-sourced our trading systems inside the corporation, the systems could deliver 60+ bug fixes/features a week. The biggest system of them, could deliver 20+ bug fixes/features per week.
 
-I am still rewriting the features, starting from the core. So, more features will come out.
-
 # Licence
 
 [Apache license 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
