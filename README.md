@@ -16,7 +16,7 @@ For documentations, please see the [wiki](https://github.com/winteryoung/yanwte/
 
 # QA
 
-If you have questions, you can post a question on [StackOverflow](https://www.stackoverflow.com) tagged with "yanwte".
+If you have a question, you can mail to me: 513805252@qq.com.
 
 # Performance
 
