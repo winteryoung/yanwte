@@ -23,8 +23,22 @@ open class ExtensionPointBuilder<EP>(
         /**
          * The SAM interface that represents this extension point.
          */
-        val extensionPointInterface: Class<EP>
+        val extensionPointInterface: Class<EP>,
+        /**
+         * Options.
+         */
+        var options: ExtensionPointBuilderOptions
 ) {
+    constructor(
+            /**
+             * The SAM interface that represents this extension point.
+             */
+            extensionPointInterface: Class<EP>
+    ) : this(extensionPointInterface, ExtensionPointBuilderOptions())
+
+    /**
+     * The extension point name.
+     */
     val extensionPointName: String = extensionPointInterface.name
 
     /**
@@ -65,10 +79,27 @@ open class ExtensionPointBuilder<EP>(
      */
     fun extOfClass(extensionClass: Class<out EP>): Combinator {
         val extensionName = extensionClass.name
-        val plugin = YanwtePlugin.getPluginByExtensionName(extensionName)
-        val extPojo = plugin.getExtensionByName(extensionName)
-                ?: throw YanwteException("Cannot find extension POJO with name $extensionName")
-        return ExtensionCombinator(extensionPointName, YanwteExtension.fromPojo(extPojo))
+        return extOfClassName(extensionName)
+    }
+
+    /**
+     * Returns the extension combinator of the given class name. The extension class must have
+     * a parameterless constructor.
+     */
+    fun extOfClassName(extensionClassName: String): Combinator {
+        YanwtePlugin.getPluginByExtensionName(extensionClassName).let { plugin ->
+            plugin.getExtensionByName(extensionClassName).let { extPojo ->
+                if (extPojo == null) {
+                    if (options.failOnExtensionNotFound) {
+                        throw YanwteException("Cannot find extension POJO with name $extensionClassName")
+                    } else {
+                        return EmptyCombinator(extensionPointName)
+                    }
+                } else {
+                    return ExtensionCombinator(extensionPointName, YanwteExtension.fromPojo(extPojo))
+                }
+            }
+        }
     }
 
     /**

@@ -13,14 +13,10 @@ import com.github.winteryoung.yanwte.YanwtePlugin
  */
 internal class DefaultYanwtePlugin : YanwtePlugin {
     override fun getExtensionByName(extensionName: String): Any? {
-        return createInstance(extensionName)
-    }
-
-    private fun createInstance(name: String): Any {
         Thread.currentThread().contextClassLoader?.let { ccl ->
             val c: Class<*>
             try {
-                c = ccl.loadClass(name)
+                c = ccl.loadClass(extensionName)
                 return c.newInstance()
             } catch (e: ClassNotFoundException) {
                 // try next
@@ -28,7 +24,12 @@ internal class DefaultYanwtePlugin : YanwtePlugin {
         }
 
         val cl = this.javaClass.classLoader
-        val c = cl.loadClass(name)
-        return c.newInstance()
+        try {
+            cl.loadClass(extensionName)
+        } catch (e: ClassNotFoundException) {
+            return null
+        }.let {
+            return it.newInstance()
+        }
     }
 }
