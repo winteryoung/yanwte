@@ -5,8 +5,8 @@ import com.github.winteryoung.yanwte.internals.YanwteRuntime
 import com.github.winteryoung.yanwte.internals.utils.onNull
 
 /**
- * A class implementing data extension point means it is able to extend its data.
- * Compared to `ExtensionPoint`, you can think of that as a kind of behavioral
+ * A domain class implementing data extension point means it is able to extend its data.
+ * Compared to extension point, you can think of that as a kind of behavioral
  * extension point. This is focused on data.
  *
  * @author Winter Young
@@ -56,44 +56,10 @@ internal fun <T> DataExtensionPoint.getDataExtension(extSpaceName: String, exten
         return it as T
     }
 
-    return initDataExt(extSpaceName, extension.pojoExtension!!, this)?.let {
-        YanwteContainer.registerDataExtension(this, extSpaceName, it)
-        it as T
-    }
-}
-
-@Suppress("UNCHECKED_CAST")
-private fun initDataExt(extSpaceName: String, extension: Any, dataExtensionPoint: DataExtensionPoint): Any? {
-    return getDataExtInitializer(extSpaceName) { extSpaceName ->
-        extension.javaClass.classLoader.let {
-            try {
-                it.loadClass("$extSpaceName.DataExtensionInitializer") as Class<YanwteDataExtensionInitializer>
-            } catch (e: ClassNotFoundException) {
-                null
-            }
+    return YanwteContainer.getDataExtInitializer(extSpaceName)?.let {
+        it.initialize(this)?.let {
+            YanwteContainer.registerDataExtension(this, extSpaceName, it)
+            it as T
         }
-    }.let { dataExtInitializer ->
-        dataExtInitializer.initialize(dataExtensionPoint)
-    }
-}
-
-internal fun getDataExtInitializer(
-        extSpaceName: String,
-        initializerClassLoader: (String) -> Class<YanwteDataExtensionInitializer>?
-): YanwteDataExtensionInitializer {
-    YanwteContainer.getDataExtInitializer(extSpaceName)?.let {
-        return it
-    }
-
-    initializerClassLoader(extSpaceName)?.let {
-        it.newInstance().let {
-            YanwteContainer.registerDataExtInitializer(extSpaceName, it)
-        }
-        return YanwteContainer.getDataExtInitializer(extSpaceName)!!
-    }
-
-    return EmptyDataExtensionInitializer.let {
-        YanwteContainer.registerDataExtInitializer(extSpaceName, it)
-        it
     }
 }
