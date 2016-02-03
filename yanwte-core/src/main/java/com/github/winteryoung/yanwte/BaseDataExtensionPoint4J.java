@@ -26,4 +26,12 @@ public abstract class BaseDataExtensionPoint4J implements DataExtensionPoint {
         Intrinsics.checkParameterIsNotNull(extSpaceName, "extSpaceName");
         return (T) DataExtensionPoint.DefaultImpls.getDataExtension(this, extSpaceName);
     }
+
+    @SuppressWarnings("unchecked")
+    @Nullable
+    @Override
+    public <T> T getDataExtension(@NotNull YanwteExtensionSpace extSpace) {
+        Intrinsics.checkParameterIsNotNull(extSpace, "extSpaceName");
+        return (T) DataExtensionPoint.DefaultImpls.getDataExtension(this, extSpace);
+    }
 }

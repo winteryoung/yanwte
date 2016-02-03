@@ -13,13 +13,23 @@ import org.springframework.context.ApplicationContext
 internal class SpringPlugin(val applicationContext: ApplicationContext) : YanwtePlugin {
     override fun getExtensionByName(extensionName: String): Any? {
         val extensionClass = applicationContext.classLoader.let { cl ->
-            cl.loadClass(extensionName)
+            try {
+                cl.loadClass(extensionName)
+            } catch (e: ClassNotFoundException) {
+                return null
+            }
         }
-        val extensions = applicationContext.getBeansOfType(extensionClass).values.toList()
-        if (extensions.size != 1) {
-            throw YanwteException("Cannot find a unique bean with type $extensionName," +
-                    " got ${extensions.size} beans")
+
+        applicationContext.getBeansOfType(extensionClass).values.toList().let { extensions ->
+            if (extensions.isEmpty()) {
+                return null
+            }
+
+            if (extensions.size > 1) {
+                throw YanwteException("Cannot find a unique bean with type $extensionName")
+            }
+
+            return extensions[0]
         }
-        return extensions[0]
     }
 }

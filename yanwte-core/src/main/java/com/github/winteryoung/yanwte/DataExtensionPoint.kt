@@ -19,10 +19,8 @@ interface DataExtensionPoint {
      * extension of the current thread.
      */
     fun <T> getDataExtension(): T? {
-        return YanwteRuntime.currentRunningExtension!!.let { extension ->
-            extension.extensionSpaceName.let { extSpaceName ->
-                getDataExtension<T>(extSpaceName, extension)
-            }
+        return YanwteRuntime.currentRunningExtension!!.run {
+            getDataExtension<T>(extensionSpaceName)
         }
     }
 
@@ -35,6 +33,10 @@ interface DataExtensionPoint {
         return YanwteRuntime.currentRunningExtension!!.let { extension ->
             getDataExtension<T>(extSpaceName, extension)
         }
+    }
+
+    fun <T> getDataExtension(extSpace: YanwteExtensionSpace): T? {
+        return getDataExtension(extSpace.name)
     }
 }
 

@@ -5,7 +5,7 @@ import com.github.winteryoung.yanwte.YanwtePlugin
 /**
  * This Yanwte plugin implementation does single classloader loading, and
  * the objects like extension points and extensions are created by this
- * plugin. It's suitable for library jars, which no multiple classloaders are
+ * plugin. It's suitable for library jars, which no multiple class loaders are
  * needed, and objects creations are not managed by external containers like Spring.
  *
  * @author Winter Young
