@@ -116,19 +116,40 @@ object YanwteContainer {
      * Returns the POJO extension point instance by the given POJO extension point
      * interface class.
      */
-    @Suppress("UNCHECKED_CAST")
     fun <T : Any> getExtensionPointByClass(extensionPointInterfaceClass: Class<T>): T? {
-        val extPointName = extensionPointInterfaceClass.name
-        val extPoint = nameToExtPoint[extPointName]
-                ?: throw YanwteException("Cannot find extension point with name $extPointName")
+        extensionPointInterfaceClass.name.let {
+            nameToExtPoint[it].let {
+                val extensionPoint = it ?: findExtensionPointProvider(extensionPointInterfaceClass).let {
+                    it.getExtensionPoint().apply {
+                        registerExtensionPoint(this)
+                    }
+                }
 
-        extPoint.pojoExtensionPoint?.let {
-            return it as T
+                extensionPoint.pojoExtensionPoint?.let {
+                    @Suppress("UNCHECKED_CAST")
+                    return it as T
+                }
+
+                generateExtensionPointDelegate(
+                        extensionPoint,
+                        extensionPointInterfaceClass
+                ).let { delegate ->
+                    extensionPoint.pojoExtensionPoint = delegate
+                    return delegate
+                }
+            }
         }
+    }
 
-        generateExtensionPointDelegate(extPoint, extensionPointInterfaceClass).let { delegate ->
-            extPoint.pojoExtensionPoint = delegate
-            return delegate
+    private fun <T> findExtensionPointProvider(extensionPointInterfaceClass: Class<T>): ExtensionPointProvider {
+        return extensionPointInterfaceClass.classLoader.let {
+            try {
+                it.loadClass("${extensionPointInterfaceClass.name}Provider")
+            } catch (e: ClassNotFoundException) {
+                throw YanwteException("Cannot find provider for ${extensionPointInterfaceClass.name}", e)
+            }.let { providerClass ->
+                providerClass.newInstance() as ExtensionPointProvider
+            }
         }
     }
 
@@ -142,7 +163,7 @@ object YanwteContainer {
     /**
      * Register the extension space with the given name.
      */
-    internal fun registerExtensionSpace(name: String, space: YanwteExtensionSpace) {
+    private fun registerExtensionSpace(name: String, space: YanwteExtensionSpace) {
         nameToExtSpace[name] = space
     }
 }

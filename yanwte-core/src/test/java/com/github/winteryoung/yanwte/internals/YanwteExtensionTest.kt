@@ -35,9 +35,7 @@ class YanwteExtensionTest {
 
     @Test
     fun testPojoExtensionExecution() {
-        ExtensionPointBuilder(TestExtensionPoint::class.java).apply {
-            tree = extOfClass(TestExtension::class.java)
-        }.buildAndRegister()
+        YanwteContainer.getExtensionPointByClass(TestExtensionPoint::class.java)
 
         val ext = YanwteContainer.getExtensionByName(TestExtension::class.java.name)!!
         val (output) = ext(ExtensionPointInput(listOf(3, 4)))
@@ -60,6 +58,12 @@ class YanwteExtensionTest {
 
     interface TestExtensionPoint {
         fun foo(a: Integer, b: Integer): Integer
+    }
+
+    class TestExtensionPointProvider : ExtensionPointProvider() {
+        override fun tree(): Combinator {
+            return extOfClass(TestExtension::class.java)
+        }
     }
 
     class TestExtension : TestExtensionPoint {

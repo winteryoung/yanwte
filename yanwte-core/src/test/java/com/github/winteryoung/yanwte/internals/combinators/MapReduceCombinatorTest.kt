@@ -1,6 +1,7 @@
 package com.github.winteryoung.yanwte.internals.combinators
 
-import com.github.winteryoung.yanwte.ExtensionPointBuilder
+import com.github.winteryoung.yanwte.Combinator
+import com.github.winteryoung.yanwte.ExtensionPointProvider
 import com.github.winteryoung.yanwte.YanwteContainer
 import org.junit.Assert
 import org.junit.Test
@@ -13,8 +14,17 @@ import org.junit.Test
 class MapReduceCombinatorTest {
     @Test
     fun test() {
-        ExtensionPointBuilder(TestExtensionPoint::class.java).apply {
-            tree = mapReduce<Integer?>(listOf(
+        val output = YanwteContainer.getExtensionPointByClass(TestExtensionPoint::class.java)!!.foo()
+        Assert.assertEquals(5, output)
+    }
+
+    interface TestExtensionPoint {
+        fun foo(): Integer?
+    }
+
+    class TestExtensionPointProvider : ExtensionPointProvider() {
+        override fun tree(): Combinator {
+            return mapReduce<Integer?>(listOf(
                     extOfClass(Extension1::class.java),
                     extOfClass(Extension2::class.java)
             )) { outputs ->
@@ -23,15 +33,7 @@ class MapReduceCombinatorTest {
                     c as Integer
                 }
             }
-        }.buildAndRegister()
-
-        val output = YanwteContainer.getExtensionPointByClass(TestExtensionPoint::class.java)!!.foo()
-
-        Assert.assertEquals(5, output)
-    }
-
-    interface TestExtensionPoint {
-        fun foo(): Integer?
+        }
     }
 
     class Extension1 : TestExtensionPoint {

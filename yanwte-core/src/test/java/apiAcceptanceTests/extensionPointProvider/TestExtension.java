@@ -1,4 +1,4 @@
-package apiAcceptanceTests.extensionPointBuilder;
+package apiAcceptanceTests.extensionPointProvider;
 
 public class TestExtension implements TestExtensionPoint {
     @Override

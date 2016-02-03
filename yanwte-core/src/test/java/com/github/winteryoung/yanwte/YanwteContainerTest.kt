@@ -32,10 +32,6 @@ class YanwteContainerTest {
 
     @Test
     fun testGetExtensionPointByClass() {
-        ExtensionPointBuilder(TestExtensionPoint::class.java).apply {
-            tree = empty()
-        }.buildAndRegister()
-
         val extPoint = YanwteContainer.getExtensionPointByClass(TestExtensionPoint::class.java)
         Assert.assertNotNull(extPoint)
 
@@ -47,6 +43,12 @@ class YanwteContainerTest {
 
 interface TestExtensionPoint {
     fun foo()
+}
+
+class TestExtensionPointProvider : ExtensionPointProvider() {
+    override fun tree(): Combinator {
+        return empty()
+    }
 }
 
 class TestData : DataExtensionPoint

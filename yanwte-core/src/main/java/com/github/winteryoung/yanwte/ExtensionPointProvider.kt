@@ -9,59 +9,20 @@ import com.github.winteryoung.yanwte.internals.combinators.MapReduceCombinator
 import java.lang.reflect.Method
 
 /**
- * An extension point builder can build an instance of an extension point.
+ * An extension point provider can build an instance of an extension point.
  * The only thing you must provide is the extension tree.
  *
- * *Note*. The [build] process is expensive, because it uses reflection.
- *
- * Parameter type [EP] refers to the SAM interface representing this extension point.
- *
  * @author Winter Young
- * @since 2016/1/17
  */
-open class ExtensionPointBuilder<EP>(
-        /**
-         * The SAM interface that represents this extension point.
-         */
-        val extensionPointInterface: Class<EP>,
-        /**
-         * Options.
-         */
-        var options: ExtensionPointBuilderOptions
-) {
-    constructor(
-            /**
-             * The SAM interface that represents this extension point.
-             */
-            extensionPointInterface: Class<EP>
-    ) : this(extensionPointInterface, ExtensionPointBuilderOptions())
-
-    /**
-     * The extension point name.
-     */
-    val extensionPointName: String = extensionPointInterface.name
-
-    /**
-     * The extension tree of the extension point.
-     */
-    var tree: Combinator = EmptyCombinator(extensionPointName)
-
+abstract class ExtensionPointProvider {
     /**
      * Build the extension point instance.
      */
-    internal fun build(): ExtensionPoint {
+    internal fun getExtensionPoint(): ExtensionPoint {
         val method = parseMethod(extensionPointInterface)
         return ExtensionPoint(extensionPointName, extensionPointInterface, method).apply {
-            this.combinator = tree
+            this.combinator = tree()
         }
-    }
-
-    /**
-     * Build and extension point instance and register it in [YanwteContainer].
-     */
-    fun buildAndRegister() {
-        val extPoint = build()
-        YanwteContainer.registerExtensionPoint(extPoint)
     }
 
     private fun parseMethod(samInterface: Class<*>): Method {
@@ -74,10 +35,44 @@ open class ExtensionPointBuilder<EP>(
     }
 
     /**
+     * The extension point name.
+     */
+    private val extensionPointName: String by lazy {
+        this.javaClass.name.let {
+            it.substring(0, it.lastIndexOf("Provider"))
+        }
+    }
+
+    private val extensionPointInterface: Class<*> by lazy {
+        this.javaClass.classLoader.let {
+            try {
+                it.loadClass(extensionPointName)
+            } catch (e: ClassNotFoundException) {
+                throw YanwteException("Cannot find extension point $extensionPointName", e)
+            }
+        }
+    }
+
+    /**
+     * Client overrides this method to provide the extension tree of the extension point.
+     */
+    protected abstract fun tree(): Combinator
+
+    /**
+     * Throws an exception if no extension can be found for the given name or class.
+     * The default is true, so it can fail-fast. Client can override this property.
+     *
+     * This method can affect
+     * * [extOfClass]
+     * * [extOfClassName]
+     */
+    open protected val isFailOnExtensionNotFound: Boolean = true
+
+    /**
      * Returns the extension combinator of the given class. [extensionClass] must have a
      * parameterless constructor.
      */
-    fun extOfClass(extensionClass: Class<out EP>): Combinator {
+    fun extOfClass(extensionClass: Class<*>): Combinator {
         val extensionName = extensionClass.name
         return extOfClassName(extensionName)
     }
@@ -90,7 +85,7 @@ open class ExtensionPointBuilder<EP>(
         YanwtePlugin.getPluginByExtensionName(extensionClassName).let { plugin ->
             plugin.getExtensionByName(extensionClassName).let { extPojo ->
                 if (extPojo == null) {
-                    if (options.failOnExtensionNotFound) {
+                    if (isFailOnExtensionNotFound) {
                         throw YanwteException("Cannot find extension POJO with name $extensionClassName")
                     } else {
                         return EmptyCombinator(extensionPointName)

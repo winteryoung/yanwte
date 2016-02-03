@@ -1,7 +1,8 @@
 package integrationTests.mixedTest
 
+import com.github.winteryoung.yanwte.Combinator
 import com.github.winteryoung.yanwte.DataExtensionPoint
-import com.github.winteryoung.yanwte.ExtensionPointBuilder
+import com.github.winteryoung.yanwte.ExtensionPointProvider
 import com.github.winteryoung.yanwte.YanwteContainer
 import integrationTests.mixedTest.extspace1.TestExtension1
 import integrationTests.mixedTest.extspace2.TestExtension2
@@ -27,13 +28,6 @@ class MixedTest {
 
     @Test
     fun test() {
-        ExtensionPointBuilder(TestExtensionPoint::class.java).apply {
-            tree = chain(
-                    extOfClass(TestExtension1::class.java),
-                    extOfClass(TestExtension2::class.java)
-            )
-        }.buildAndRegister()
-
         val testExtensionPoint = YanwteContainer.getExtensionPointByClass(TestExtensionPoint::class.java)!!
 
         testExtensionPoint.foo(TestData(3)).let {
@@ -56,5 +50,14 @@ data class TestDataExt(
 
 interface TestExtensionPoint {
     fun foo(testData: TestData): String?
+}
+
+class TestExtensionPointProvider : ExtensionPointProvider() {
+    override fun tree(): Combinator {
+        return chain(
+                extOfClass(TestExtension1::class.java),
+                extOfClass(TestExtension2::class.java)
+        )
+    }
 }
 
