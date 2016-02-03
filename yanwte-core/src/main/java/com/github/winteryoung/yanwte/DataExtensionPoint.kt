@@ -58,7 +58,7 @@ internal fun <T> DataExtensionPoint.getDataExtension(extSpaceName: String, exten
 
     return YanwteContainer.getDataExtInitializer(extSpaceName)?.let {
         it.initialize(this)?.let {
-            YanwteContainer.registerDataExtension(this, extSpaceName, it)
+            YanwteContainer.cacheDataExtension(this, extSpaceName, it)
             it as T
         }
     }

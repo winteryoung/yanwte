@@ -24,7 +24,7 @@ class YanwteContainerTest {
     fun testDataExtensionRegistration() {
         val testData = TestData()
         val extSpaceName = TestData::class.java.`package`.name
-        YanwteContainer.registerDataExtension(testData, extSpaceName, TestDataExt(5))
+        YanwteContainer.cacheDataExtension(testData, extSpaceName, TestDataExt(5))
         val (i) = YanwteContainer.getDataExtension(testData, extSpaceName) as TestDataExt
 
         Assert.assertEquals(5, i)

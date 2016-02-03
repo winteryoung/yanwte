@@ -42,9 +42,35 @@ internal class YanwteExtension(
     operator fun invoke(input: ExtensionPointInput): ExtensionPointOutput {
         try {
             YanwteRuntime.currentRunningExtension = this
+
+            if (input.args.size > 0) {
+                input.args[0].let { domainObj ->
+                    YanwteContainer.getBizRecognizerResult(domainObj!!, extensionSpaceName)?.let {
+                        if (!it) {
+                            return ExtensionPointOutput.empty
+                        }
+                    } ?: run {
+                        runBizRecognizer(domainObj, extensionSpaceName).let {
+                            YanwteContainer.cacheBizRecognizerResult(domainObj, extensionSpaceName, it)
+                            if (!it) {
+                                return ExtensionPointOutput.empty
+                            }
+                        }
+                    }
+                }
+            }
+
             return action(input)
         } finally {
             YanwteRuntime.currentRunningExtension = null
+        }
+    }
+
+    private fun runBizRecognizer(domainObj: Any, extensionSpaceName: String): Boolean {
+        return YanwteContainer.getBizRecognizer(extensionSpaceName)?.let {
+            it.recognizes(domainObj)
+        } ?: run {
+            true
         }
     }
 
