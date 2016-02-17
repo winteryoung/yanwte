@@ -16,7 +16,7 @@ For documentations, please see the [wiki](https://github.com/winteryoung/yanwte/
 
 # QA
 
-If you have a question, you can mail to me: 513805252@qq.com.
+If you have any questions, please mail to me: 513805252@qq.com.
 
 # Performance
 
