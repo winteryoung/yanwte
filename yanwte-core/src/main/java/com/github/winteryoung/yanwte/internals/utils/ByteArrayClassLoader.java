@@ -3,7 +3,6 @@
  */
 package com.github.winteryoung.yanwte.internals.utils;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.security.*;
 import java.util.HashMap;
@@ -97,34 +96,11 @@ public class ByteArrayClassLoader extends ClassLoader {
      * the {@link java.lang.ClassLoader#getResourceAsStream(String)} method.
      */
     public enum PersistenceHandler {
-
-        /**
-         * The manifest persistence handler retains all class file representations and makes them accessible.
-         */
-        MANIFEST(true) {
-            @Override
-            protected byte[] lookup(String name, Map<String, byte[]> typeDefinitions) {
-                return typeDefinitions.get(name);
-            }
-
-            @Override
-            protected InputStream inputStream(String resourceName, Map<String, byte[]> typeDefinitions) {
-                if (!resourceName.endsWith(CLASS_FILE_SUFFIX)) {
-                    return null;
-                }
-                byte[] binaryRepresentation = typeDefinitions.get(resourceName.replace('/', '.')
-                        .substring(0, resourceName.length() - CLASS_FILE_SUFFIX.length()));
-                return binaryRepresentation == null
-                        ? null
-                        : new ByteArrayInputStream(binaryRepresentation);
-            }
-        },
-
         /**
          * The latent persistence handler hides all class file representations and does not make them accessible
          * even before they are loaded.
          */
-        LATENT(false) {
+        LATENT() {
             @Override
             protected byte[] lookup(String name, Map<String, byte[]> typeDefinitions) {
                 return typeDefinitions.remove(name);
@@ -135,34 +111,6 @@ public class ByteArrayClassLoader extends ClassLoader {
                 return null;
             }
         };
-
-        /**
-         * The suffix of files in the Java class file format.
-         */
-        private static final String CLASS_FILE_SUFFIX = ".class";
-
-        /**
-         * {@code true} if this persistence handler represents manifest class file storage.
-         */
-        private final boolean manifest;
-
-        /**
-         * Creates a new persistence handler.
-         *
-         * @param manifest {@code true} if this persistence handler represents manifest class file storage.
-         */
-        PersistenceHandler(boolean manifest) {
-            this.manifest = manifest;
-        }
-
-        /**
-         * Checks if this persistence handler represents manifest class file storage.
-         *
-         * @return {@code true} if this persistence handler represents manifest class file storage.
-         */
-        public boolean isManifest() {
-            return manifest;
-        }
 
         /**
          * Performs a lookup of a class file by its name.
