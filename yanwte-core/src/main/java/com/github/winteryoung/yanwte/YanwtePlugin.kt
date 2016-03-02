@@ -49,7 +49,7 @@ interface YanwtePlugin {
          *
          * If not found, finally that will resort to the default plugin.
          */
-        fun getPluginByExtensionName(extensionName: String): YanwtePlugin {
+        internal fun getPluginByExtensionName(extensionName: String): YanwtePlugin {
             val packageName = extensionName.substringBeforeLast(".")
             return packageNameToPlugin[packageName] ?: defaultPlugin
         }
