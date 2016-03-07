@@ -43,7 +43,7 @@ abstract class ExtensionPointProvider {
         }
     }
 
-    private val extensionPointInterface: Class<*> by lazy {
+    val extensionPointInterface: Class<*> by lazy {
         this.javaClass.classLoader.let {
             try {
                 it.loadClass(extensionPointName)
