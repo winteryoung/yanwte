@@ -5,17 +5,18 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.winteryoung</groupId>
     <artifactId>yanwte</artifactId>
-    <version>1.2.0-beta-9-SNAPSHOT</version>
+    <version>1.2.0-beta-9</version>
     <packaging>pom</packaging>
     <inceptionYear>2016</inceptionYear>
     <description>A library to help extending your programs.</description>
     <url>https://github.com/winteryoung/yanwte</url>
-
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>7</version>
-    </parent>
+    <name>yanwte</name>
+    <developers>
+        <developer>
+            <name>Winter Young</name>
+            <email>513805252@qq.com</email>
+        </developer>
+    </developers>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -183,7 +184,7 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <keyname>5E62B207</keyname>
+                            <keyname>352869B6</keyname>
                         </configuration>
                     </plugin>
                     <plugin>
