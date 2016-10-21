@@ -17,12 +17,12 @@ internal class PackageNamedKeyMap<T> {
      * or the ancestor package of the given package name registered in it.
      */
     operator fun get(packageName: String): T? {
-        if (packageName.isEmpty()) {
-            return null
-        }
-
         map[packageName]?.let {
             return it
+        }
+
+        if (packageName.isEmpty()) {
+            return null
         }
 
         return get(packageName.substringBeforeLast(".", missingDelimiterValue = ""))
