@@ -11,7 +11,5 @@
         <property name="basePackage" value="springtest"/>
     </bean>
 
-    <context:component-scan base-package="springtest">
-        <context:include-filter type="annotation" expression="com.github.winteryoung.yanwte.YanwteExt"/>
-    </context:component-scan>
+    <context:component-scan base-package="springtest"/>
 </beans>
