@@ -3,14 +3,16 @@ package com.github.winteryoung.yanwte.spring.internals;
 import com.github.winteryoung.yanwte.YanwteContainer;
 
 /**
- * 用来在 spring 中创建 extension point provider。
+ * Factory bean for extension point providers.
  *
- * @author fanshen
+ * @author Winter Young
  * @since 2016/10/22
  */
+@SuppressWarnings("WeakerAccess")
 public class ExtensionPointProviderFactoryBean {
     /**
-     * 框架内部使用。
+     * Factory method that creates the provider instance for the specified
+     * extension point interface.
      */
     public Object createExtensionPointProvider(Class<?> extensionPointClass) {
         return YanwteContainer.getExtensionPointByClass(extensionPointClass);

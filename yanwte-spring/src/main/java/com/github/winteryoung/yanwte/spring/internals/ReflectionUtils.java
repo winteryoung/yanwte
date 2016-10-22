@@ -14,10 +14,10 @@ import java.util.jar.JarFile;
 /**
  * 反射工具。实现是基于 Spring 3.1.11.RELEASE 版的 PathMatchingResourcePatternResolver 修改的。
  *
- * @author fanshen
+ * @author Winter Young
  * @since 2015/7/7
  */
-public class ReflectionUtils {
+class ReflectionUtils {
     private ReflectionUtils() {
     }
 
@@ -65,12 +65,12 @@ public class ReflectionUtils {
      * 递归地在类路径中以指定的类加载器获取 dirPath 指定的目录下面所有的资源。cl 可为空，为空时取系统类加载器。
      * 返回值一定不为 null。
      */
-    public static ClassPathResource[] getClassPathResources(String dirPath, ClassLoader cl) throws IOException {
+    private static ClassPathResource[] getClassPathResources(String dirPath, ClassLoader cl) throws IOException {
         if (cl == null) {
             cl = Thread.currentThread().getContextClassLoader();
         }
         URL[] roots = getRoots(dirPath, cl);
-        Set<ClassPathResource> result = new LinkedHashSet<ClassPathResource>(16);
+        Set<ClassPathResource> result = new LinkedHashSet<>(16);
         for (URL root : roots) {
             if (isJarResource(root)) {
                 result.addAll(doFindPathMatchingJarResources(root));
@@ -82,31 +82,10 @@ public class ReflectionUtils {
     }
 
     /**
-     * 获取指定 basePackages 下面所有能用 classLoaders 加载的类。
-     *
-     * @param basePackages 这些包下面的类会被扫描
-     * @param classLoaders 用来加载 basePackages 下面类的类加载器
-     * @return 能够扫描到的类
-     */
-    public static Class<?>[] getAllClassPathClasses(String[] basePackages, ClassLoader... classLoaders)
-        throws IOException {
-        if (classLoaders.length <= 0) {
-            classLoaders = new ClassLoader[] {Thread.currentThread().getContextClassLoader()};
-        }
-        List<Class<?>> classes = Lists.newArrayListWithCapacity(100);
-        for (ClassLoader classLoader : classLoaders) {
-            for (String basePackage : basePackages) {
-                classes.addAll(Lists.newArrayList(ReflectionUtils.getClasses(basePackage, classLoader)));
-            }
-        }
-        return classes.toArray(new Class[classes.size()]);
-    }
-
-    /**
      * 使用 cl 指定的类加载器递归加载 packageName 指定的包名下面的所有的类。不会返回 null。
      * cl 为空时使用系统类加载器。返回值一定不为 null。返回值中不包含类路径中的内部类。
      */
-    public static Class<?>[] getClasses(String packageName, ClassLoader cl) throws IOException {
+    static Class<?>[] getClasses(String packageName, ClassLoader cl) throws IOException {
         if (cl == null) {
             cl = Thread.currentThread().getContextClassLoader();
         }
@@ -160,7 +139,7 @@ public class ReflectionUtils {
         Set<File> allFiles = Sets.newLinkedHashSet();
         retrieveAllFiles(rootDir, allFiles);
         String classPathRoot = parseClassPathRoot(rootDir, dirPath);
-        Set<ClassPathResource> result = new LinkedHashSet<ClassPathResource>(allFiles.size());
+        Set<ClassPathResource> result = new LinkedHashSet<>(allFiles.size());
         for (File file : allFiles) {
             String absolutePath = file.getAbsolutePath();
             URL url = new URL("file:///" + absolutePath);
@@ -231,7 +210,7 @@ public class ReflectionUtils {
                 // The Sun JRE does not return a slash here, but BEA JRockit does.
                 rootEntryPath = rootEntryPath + "/";
             }
-            Set<ClassPathResource> result = new LinkedHashSet<ClassPathResource>(8);
+            Set<ClassPathResource> result = new LinkedHashSet<>(8);
             for (Enumeration<JarEntry> entries = jarFile.entries(); entries.hasMoreElements();) {
                 JarEntry entry = entries.nextElement();
                 String entryPath = entry.getName();
@@ -314,7 +293,7 @@ public class ReflectionUtils {
     /**
      * 类路径资源。
      */
-    public static class ClassPathResource {
+    private static class ClassPathResource {
         /**
          * 此资源对应的 URL 对象。
          */
@@ -328,16 +307,16 @@ public class ReflectionUtils {
         /**
          * ctor.
          */
-        public ClassPathResource(URL url, String classPathPath) {
+        ClassPathResource(URL url, String classPathPath) {
             this.url = url;
             this.classPathPath = classPathPath;
         }
 
-        public URL getUrl() {
+        URL getUrl() {
             return url;
         }
 
-        public String getClassPathPath() {
+        String getClassPathPath() {
             return classPathPath;
         }
     }

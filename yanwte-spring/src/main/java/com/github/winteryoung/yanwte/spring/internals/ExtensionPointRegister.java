@@ -21,9 +21,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Spring 初始化后自动注册扩展点。
+ * Auto register extension point providers after Spring initialization.
  *
- * @author fanshen
+ * @author Winter Young
  * @since 2016/10/22
  */
 @Component

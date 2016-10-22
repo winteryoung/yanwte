@@ -5,9 +5,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Yanwte spring 配置。
+ * Yanwte spring configuration, for auto configuring beans.
  *
- * @author fanshen
+ * @author Winter Young
  * @since 2016/10/22
  */
 @Configuration

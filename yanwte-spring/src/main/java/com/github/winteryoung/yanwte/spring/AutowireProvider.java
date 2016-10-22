@@ -6,9 +6,10 @@ import org.springframework.context.annotation.Lazy;
 import java.lang.annotation.*;
 
 /**
- * 自动注入 extension point provider。
+ * Auto wire extension point provider instance to fields marked by this annotation.
+ * The corresponding extension point interface must be marked with {@link YanwteExtensionPoint}.
  *
- * @author fanshen
+ * @author Winter Young
  * @since 2016/10/22
  */
 @Target({ElementType.CONSTRUCTOR, ElementType.FIELD, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
