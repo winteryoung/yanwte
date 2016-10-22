@@ -1,12 +1,17 @@
 package com.github.winteryoung.yanwte.spring.internals;
 
-import com.github.winteryoung.yanwte.YanwteContainer;
 import com.github.winteryoung.yanwte.YanwteException;
 import com.github.winteryoung.yanwte.spring.YanwteExtensionPoint;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
+import org.springframework.beans.factory.config.ConstructorArgumentValues;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -22,15 +27,12 @@ import java.util.stream.Collectors;
  * @since 2016/10/22
  */
 @Component
-public class ExtensionPointRegister implements BeanDefinitionRegistryPostProcessor {
+public class ExtensionPointRegister implements BeanFactoryPostProcessor {
     private ClassLoader ccl = Thread.currentThread().getContextClassLoader();
 
     @Override
-    public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
-    }
-
-    @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+        DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) beanFactory;
         Class<?>[] classes;
         try {
             classes = ReflectionUtils.getClasses("", getClass().getClassLoader());
@@ -43,9 +45,38 @@ public class ExtensionPointRegister implements BeanDefinitionRegistryPostProcess
             return annotation != null;
         }).collect(Collectors.toList());
 
+        beanFactory.registerSingleton("extensionPointProviderFactoryBean", new ExtensionPointProviderFactoryBean());
+
         for (Class<?> extensionPointClass : extensionPointClasses) {
-            Object provider = YanwteContainer.getExtensionPointByClass(extensionPointClass);
-            beanFactory.registerSingleton(extensionPointClass.getSimpleName() + "Provider", provider);
+            Class providerClass = getProviderClass(extensionPointClass);
+            BeanDefinition beanDefinition = buildBeanDefinition(extensionPointClass, providerClass);
+            String uncapitalized = StringUtils.uncapitalize(extensionPointClass.getSimpleName());
+
+            defaultListableBeanFactory.registerBeanDefinition(uncapitalized + "Provider", beanDefinition);
+            defaultListableBeanFactory.clearMetadataCache();
+        }
+    }
+
+    @NotNull
+    private BeanDefinition buildBeanDefinition(Class<?> extensionPointClass, Class providerClass) {
+        RootBeanDefinition beanDefinition = (RootBeanDefinition) BeanDefinitionBuilder
+                .rootBeanDefinition(providerClass)
+                .setLazyInit(true)
+                .getRawBeanDefinition();
+        beanDefinition.setFactoryBeanName("extensionPointProviderFactoryBean");
+        beanDefinition.setFactoryMethodName("createExtensionPointProvider");
+        ConstructorArgumentValues args = new ConstructorArgumentValues();
+        args.addGenericArgumentValue(extensionPointClass);
+        beanDefinition.setConstructorArgumentValues(args);
+        beanDefinition.setTargetType(extensionPointClass);
+        return beanDefinition;
+    }
+
+    private Class getProviderClass(Class<?> extensionPointClass) {
+        try {
+            return ccl.loadClass(extensionPointClass.getName() + "Provider");
+        } catch (ClassNotFoundException e) {
+            throw new YanwteException(e.getMessage(), e);
         }
     }
 }
