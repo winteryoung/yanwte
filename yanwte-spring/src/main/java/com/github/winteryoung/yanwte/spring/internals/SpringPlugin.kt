@@ -1,4 +1,4 @@
-package com.github.winteryoung.yanwte.internals
+package com.github.winteryoung.yanwte.spring.internals
 
 import com.github.winteryoung.yanwte.YanwteException
 import com.github.winteryoung.yanwte.YanwtePlugin

@@ -156,6 +156,7 @@ object YanwteContainer {
      * Returns the POJO extension point instance by the given POJO extension point
      * interface class.
      */
+    @JvmStatic
     fun <T : Any> getExtensionPointByClass(extensionPointInterfaceClass: Class<T>): T? {
         extensionPointInterfaceClass.name.let {
             nameToExtPoint[it].let {

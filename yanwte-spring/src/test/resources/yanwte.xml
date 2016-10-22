@@ -6,10 +6,5 @@
        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context-2.5.xsd">
-
-    <bean class="com.github.winteryoung.yanwte.YanwteSpringHook">
-        <property name="basePackage" value="springtest"/>
-    </bean>
-
     <context:component-scan base-package="springtest"/>
 </beans>

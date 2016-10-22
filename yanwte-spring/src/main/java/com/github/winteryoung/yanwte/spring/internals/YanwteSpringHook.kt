@@ -1,6 +1,7 @@
-package com.github.winteryoung.yanwte
+package com.github.winteryoung.yanwte.spring.internals
 
-import com.github.winteryoung.yanwte.internals.SpringPlugin
+import com.github.winteryoung.yanwte.YanwteException
+import com.github.winteryoung.yanwte.YanwtePlugin
 import org.springframework.context.ApplicationListener
 import org.springframework.context.event.ContextRefreshedEvent
 
