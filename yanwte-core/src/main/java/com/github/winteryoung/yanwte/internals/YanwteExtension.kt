@@ -44,8 +44,8 @@ internal class YanwteExtension(
             YanwteRuntime.currentRunningExtension = this
 
             if (input.args.size > 0) {
-                input.args[0].let { domainObj ->
-                    YanwteContainer.getBizRecognizerResult(domainObj!!, extensionSpaceName)?.let {
+                input.args[0]?.let { domainObj ->
+                    YanwteContainer.getBizRecognizerResult(domainObj, extensionSpaceName)?.let {
                         if (!it) {
                             return ExtensionPointOutput.empty
                         }
