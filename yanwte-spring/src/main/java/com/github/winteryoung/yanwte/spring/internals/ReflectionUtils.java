@@ -112,10 +112,7 @@ class ReflectionUtils {
         String className = resolveClassName(resource);
         try {
             return cl.loadClass(className);
-        } catch (Throwable e) {
-            log.warn("Cannot load class " + className + " using class loader " + cl
-                    + ": " + e.getClass().getName()
-                    + ": " + e.getMessage());
+        } catch (Throwable ignored) {
             return null;
         }
     }

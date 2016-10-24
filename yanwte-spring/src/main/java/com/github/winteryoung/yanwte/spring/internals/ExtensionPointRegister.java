@@ -48,10 +48,7 @@ public class ExtensionPointRegister implements BeanFactoryPostProcessor {
             Annotation annotation = null;
             try {
                 annotation = cls.getAnnotation(YanwteExtensionPoint.class);
-            } catch (Throwable e) {
-                log.warn("Unable to get annotation of class " + cls
-                        + "： " + e.getClass().getName()
-                        + ": " + e.getMessage());
+            } catch (Throwable ignored) {
             }
             return annotation != null;
         }).collect(Collectors.toList());
