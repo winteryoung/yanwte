@@ -113,7 +113,9 @@ class ReflectionUtils {
         try {
             return cl.loadClass(className);
         } catch (Throwable e) {
-            log.warn("Cannot load class " + className + " using class loader " + cl);
+            log.warn("Cannot load class " + className + " using class loader " + cl
+                    + ": " + e.getClass().getName()
+                    + ": " + e.getMessage());
             return null;
         }
     }
