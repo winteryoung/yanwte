@@ -3,8 +3,6 @@ package com.github.winteryoung.yanwte.spring.internals;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -63,8 +61,6 @@ class ReflectionUtils {
      */
     private static final String FOLDER_SEPARATOR = "/";
 
-    private static Logger log = LoggerFactory.getLogger(ReflectionUtils.class);
-
     /**
      * 递归地在类路径中以指定的类加载器获取 dirPath 指定的目录下面所有的资源。cl 可为空，为空时取系统类加载器。
      * 返回值一定不为 null。
@@ -112,10 +108,7 @@ class ReflectionUtils {
         String className = resolveClassName(resource);
         try {
             return cl.loadClass(className);
-        } catch (Throwable e) {
-            log.warn("Cannot load class " + className + " using class loader " + cl
-                    + ": " + e.getClass().getName()
-                    + ": " + e.getMessage());
+        } catch (Throwable ignored) {
             return null;
         }
     }

@@ -4,8 +4,6 @@ import com.github.winteryoung.yanwte.YanwteException;
 import com.github.winteryoung.yanwte.spring.YanwteExtensionPoint;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
@@ -30,8 +28,6 @@ import java.util.stream.Collectors;
  */
 @Component
 public class ExtensionPointRegister implements BeanFactoryPostProcessor {
-    private Logger log = LoggerFactory.getLogger(getClass());
-
     private ClassLoader ccl = Thread.currentThread().getContextClassLoader();
 
     @Override
@@ -48,10 +44,7 @@ public class ExtensionPointRegister implements BeanFactoryPostProcessor {
             Annotation annotation = null;
             try {
                 annotation = cls.getAnnotation(YanwteExtensionPoint.class);
-            } catch (Throwable e) {
-                log.warn("Unable to get annotation of class " + cls
-                        + "： " + e.getClass().getName()
-                        + ": " + e.getMessage());
+            } catch (Throwable ignored) {
             }
             return annotation != null;
         }).collect(Collectors.toList());
