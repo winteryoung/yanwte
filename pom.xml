@@ -198,6 +198,19 @@
         </dependency>
     </dependencies>
 
+    <distributionManagement>
+        <repository>
+            <id>deployment</id>
+            <name>internal repository for releases</name>
+            <url>http://repo.caimi-inc.com/nexus/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>deployment</id>
+            <name>internal repository for snapshots</name>
+            <url>http://repo.caimi-inc.com/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <profiles>
         <profile>
             <id>release</id>
