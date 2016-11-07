@@ -91,7 +91,8 @@ abstract class ExtensionPointProvider {
                         return EmptyCombinator(extensionPointName)
                     }
                 } else {
-                    return ExtensionCombinator(extensionPointName, YanwteExtension.fromPojo(extPojo))
+                    val extension = YanwteExtension.fromPojo(extensionPointInterface, extPojo)
+                    return ExtensionCombinator(extensionPointName, extension)
                 }
             }
         }

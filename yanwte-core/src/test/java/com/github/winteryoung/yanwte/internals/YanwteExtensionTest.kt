@@ -42,20 +42,6 @@ class YanwteExtensionTest {
         Assert.assertEquals(7, output)
     }
 
-    @Test
-    fun testFromPojoCaseNoSamInterfaceImplementedByExtension() {
-        try {
-            YanwteExtension.fromPojo(BadExtension())
-            Assert.fail()
-        } catch (e: YanwteException) {
-            val expectedMsg = "Cannot find extension point for ${BadExtension::class.java.name}," +
-                    " no SAM interface found"
-            Assert.assertEquals(expectedMsg, e.message)
-        }
-    }
-
-    class BadExtension
-
     interface TestExtensionPoint {
         fun foo(a: Integer, b: Integer): Integer
     }

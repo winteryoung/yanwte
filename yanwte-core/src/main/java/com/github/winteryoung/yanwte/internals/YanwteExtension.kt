@@ -78,9 +78,10 @@ internal class YanwteExtension(
         /**
          * Constructs [YanwteExtension] from a POJO instance.
          */
-        fun fromPojo(extension: Any): YanwteExtension {
+        fun fromPojo(extensionPoint: Class<*>, extension: Any): YanwteExtension {
             val extClass = extension.javaClass
-            val (extPointName, extName) = parseExtensionClass(extClass)
+            val extPointName = extensionPoint.name
+            val extName = extClass.name
             return YanwteExtension(extName, extension) { input ->
                 val extPoint = YanwteContainer.getExtensionPointByName(extPointName)
                 if (extPoint == null) {
@@ -91,33 +92,6 @@ internal class YanwteExtension(
                 val proxy = generateExtensionExecutionDelegate(extPoint, extension)
                 proxy.execute(input)
             }
-        }
-
-        private fun isSamInterface(cls: Class<*>) = cls.isInterface && cls.declaredMethods.size == 1
-
-        private fun parseExtPointClass(cls: Class<*>?): Class<*>? {
-            if (cls == null) {
-                return null
-            }
-            if (isSamInterface(cls)) {
-                return cls
-            }
-            parseExtPointClass(cls.superclass)?.let { cls ->
-                return cls
-            }
-            for (interfaceClass in cls.interfaces) {
-                parseExtPointClass(interfaceClass)?.let { cls ->
-                    return cls
-                }
-            }
-            return null
-        }
-
-        private fun parseExtensionClass(extClass: Class<*>): Pair<String, String> {
-            val extPointName = parseExtPointClass(extClass)?.name
-                    ?: throw YanwteException("Cannot find extension point for ${extClass.name}, no SAM interface found")
-
-            return extPointName to extClass.name
         }
     }
 }
