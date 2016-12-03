@@ -2,10 +2,7 @@ package com.github.winteryoung.yanwte
 
 import com.github.winteryoung.yanwte.internals.ExtensionPoint
 import com.github.winteryoung.yanwte.internals.YanwteExtension
-import com.github.winteryoung.yanwte.internals.combinators.ChainCombinator
-import com.github.winteryoung.yanwte.internals.combinators.EmptyCombinator
-import com.github.winteryoung.yanwte.internals.combinators.ExtensionCombinator
-import com.github.winteryoung.yanwte.internals.combinators.MapReduceCombinator
+import com.github.winteryoung.yanwte.internals.combinators.*
 import java.lang.reflect.Method
 
 /**
@@ -82,21 +79,24 @@ abstract class ExtensionPointProvider {
      * a parameterless constructor.
      */
     fun extOfClassName(extensionClassName: String): Combinator {
-        YanwtePlugin.getPluginByExtensionName(extensionClassName).let { plugin ->
-            plugin.getExtensionByName(extensionClassName).let { extPojo ->
-                if (extPojo == null) {
-                    if (isFailOnExtensionNotFound) {
-                        throw YanwteException("Cannot find extension POJO with name $extensionClassName")
-                    } else {
-                        return EmptyCombinator(extensionPointName)
-                    }
-                } else {
-                    val extension = YanwteExtension.fromPojo(extensionPointInterface, extPojo)
-                    return ExtensionCombinator(extensionPointName, extension)
-                }
-            }
-        }
+        return ExtensionNameCombinator(extensionClassName, extensionPointInterface, isFailOnExtensionNotFound)
     }
+
+    /**
+     * Returns the extension combinator of the given extension space. The extension class must
+     * have a parameterless constructor. The given extension space must have at most one
+     * extension that implements this extension point. Otherwise, an exception will be thrown.
+     */
+    fun extOfExtSpace(extensionSpace: Class<out YanwteExtensionSpace>): Combinator =
+            ExtensionSpaceCombinator(extensionPointInterface, extensionSpace, isFailOnExtensionNotFound)
+
+    /**
+     * Returns the extension combinator of the given extension space. The extension class must
+     * have a parameterless constructor. The given extension space must have at most one
+     * extension that implements this extension point. Otherwise, an exception will be thrown.
+     */
+    fun extOfExtSpaceName(extensionSpaceName: String): Combinator =
+            ExtensionSpaceNameCombinator(extensionPointInterface, extensionSpaceName, isFailOnExtensionNotFound)
 
     /**
      * In case anyone wants to write an empty provide, this combinator can help.

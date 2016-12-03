@@ -1,4 +1,4 @@
-Yanwte stands for yet another way to extend. It's a library to help you extending your programs. This library is written in Kotlin, and is compatible with Java 6.
+Yanwte [ˈyænti] stands for yet another way to extend. It's a library to help you extending your programs. This library is written in Kotlin, and is compatible with Java 6.
 
 # Where Does It Come From?
 
@@ -8,7 +8,7 @@ After open-sourced our trading systems inside the corporation, the systems could
 
 # Licence
 
-Copyright [2016] [Winter Young (杨冬)]
+Copyright [2016] [Winter Young]
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

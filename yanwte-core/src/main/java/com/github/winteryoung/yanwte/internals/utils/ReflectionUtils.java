@@ -1,4 +1,4 @@
-package com.github.winteryoung.yanwte.spring.internals;
+package com.github.winteryoung.yanwte.internals.utils;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -17,7 +17,7 @@ import java.util.jar.JarFile;
  * @author Winter Young
  * @since 2015/7/7
  */
-class ReflectionUtils {
+public class ReflectionUtils {
     private ReflectionUtils() {
     }
 
@@ -85,7 +85,7 @@ class ReflectionUtils {
      * 使用 cl 指定的类加载器递归加载 packageName 指定的包名下面的所有的类。不会返回 null。
      * cl 为空时使用系统类加载器。返回值一定不为 null。返回值中不包含类路径中的内部类。
      */
-    static Class<?>[] getClasses(String packageName, ClassLoader cl) throws IOException {
+    public static Class<?>[] getClasses(String packageName, ClassLoader cl) throws IOException {
         if (cl == null) {
             cl = Thread.currentThread().getContextClassLoader();
         }
