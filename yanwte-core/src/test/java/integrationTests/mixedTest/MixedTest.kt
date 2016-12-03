@@ -4,6 +4,7 @@ import com.github.winteryoung.yanwte.Combinator
 import com.github.winteryoung.yanwte.DataExtensionPoint
 import com.github.winteryoung.yanwte.ExtensionPointProvider
 import com.github.winteryoung.yanwte.YanwteContainer
+import integrationTests.mixedTest.extspace1.ExtensionSpace1
 import integrationTests.mixedTest.extspace1.TestExtension1
 import integrationTests.mixedTest.extspace2.TestExtension2
 import org.junit.After
@@ -55,7 +56,7 @@ interface TestExtensionPoint {
 class TestExtensionPointProvider : ExtensionPointProvider() {
     override fun tree(): Combinator {
         return chain(
-                extOfClass(TestExtension1::class.java),
+                extOfExtSpace(ExtensionSpace1::class.java),
                 extOfClass(TestExtension2::class.java)
         )
     }

@@ -1,6 +1,7 @@
 package com.github.winteryoung.yanwte.spring.internals;
 
 import com.github.winteryoung.yanwte.YanwteException;
+import com.github.winteryoung.yanwte.internals.utils.ReflectionUtils;
 import com.github.winteryoung.yanwte.spring.YanwteExtensionPoint;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +36,7 @@ public class ExtensionPointRegister implements BeanFactoryPostProcessor {
         DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) beanFactory;
         Class<?>[] classes;
         try {
-            classes = ReflectionUtils.getClasses("", getClass().getClassLoader());
+            classes = ReflectionUtils.getClasses("", Thread.currentThread().getContextClassLoader());
         } catch (IOException e) {
             throw new YanwteException(e.getMessage(), e);
         }

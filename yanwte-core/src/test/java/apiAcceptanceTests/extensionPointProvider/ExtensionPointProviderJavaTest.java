@@ -22,15 +22,12 @@ public class ExtensionPointProviderJavaTest {
                 return mapReduce(
                         Collections.singletonList(
                                 extOfClass(TestExtension.class)
-                        ), new Function1<List<?>, Object>() {
-                            @Override
-                            public Object invoke(List<?> outputs) {
-                                int sum = 0;
-                                for (Object output : outputs) {
-                                    sum += (Integer) output;
-                                }
-                                return sum;
+                        ), outputs -> {
+                            int sum = 0;
+                            for (Object output : outputs) {
+                                sum += (Integer) output;
                             }
+                            return sum;
                         });
             }
 

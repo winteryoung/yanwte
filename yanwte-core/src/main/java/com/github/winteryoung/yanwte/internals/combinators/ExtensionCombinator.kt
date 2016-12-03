@@ -13,8 +13,9 @@ import com.github.winteryoung.yanwte.internals.YanwteExtension
  */
 internal class ExtensionCombinator constructor(
         extensionPointName: String,
-        val extension: YanwteExtension
-) : Combinator(extensionPointName, emptyList(), "ext") {
+        override val extension: YanwteExtension,
+        extensionName: String = "ext"
+) : ExtensionAwareCombinator(extensionPointName, extensionName) {
     override fun invokeImpl(input: ExtensionPointInput): ExtensionPointOutput {
         return extension(input)
     }

@@ -1,6 +1,7 @@
 package com.github.winteryoung.yanwte
 
 import com.github.winteryoung.yanwte.internals.YanwteExtension
+import com.github.winteryoung.yanwte.internals.combinators.ExtensionAwareCombinator
 import com.github.winteryoung.yanwte.internals.combinators.ExtensionCombinator
 import java.util.*
 
@@ -37,7 +38,7 @@ abstract class Combinator(
     /**
      * Invoke this tree.
      */
-    operator final fun invoke(input: ExtensionPointInput): ExtensionPointOutput {
+    operator fun invoke(input: ExtensionPointInput): ExtensionPointOutput {
         return invokeImpl(input)
     }
 
@@ -48,8 +49,11 @@ abstract class Combinator(
 
     internal fun collectDependentExtensions(): List<YanwteExtension> {
         fun recur(accumulator: MutableList<YanwteExtension>, tree: Combinator) {
-            if (tree is ExtensionCombinator) {
-                accumulator.add(tree.extension)
+            if (tree is ExtensionAwareCombinator) {
+                val extension = tree.extension
+                if (extension != null) {
+                    accumulator.add(extension)
+                }
             } else {
                 for (node in nodes) {
                     recur(accumulator, node)

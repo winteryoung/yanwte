@@ -13,7 +13,7 @@ class ExtensionPointProviderTest {
             TestExtensionPointProvider().getExtensionPoint()
             Assert.fail()
         } catch (e: YanwteException) {
-            Assert.assertEquals("Cannot find extension POJO with name nonExistentExt", e.message)
+            Assert.assertEquals("Cannot find extension POJO with name: nonExistentExt", e.message)
         }
     }
 

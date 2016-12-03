@@ -12,7 +12,7 @@ public class TestExtension implements TestExtensionPoint {
     @Nullable
     @Override
     public String foo(@NotNull TestData testData) {
-        TestDataExt testDataExt = (TestDataExt) testData.getDataExtension();
+        TestDataExt testDataExt = testData.getDataExtension();
         if (testDataExt != null) {
             return testDataExt.getI() + "";
         } else {
