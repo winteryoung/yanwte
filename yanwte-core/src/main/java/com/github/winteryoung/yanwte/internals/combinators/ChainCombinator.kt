@@ -15,7 +15,7 @@ import com.github.winteryoung.yanwte.ExtensionPointOutput
 internal class ChainCombinator(
         extensionPointName: String,
         nodes: List<Combinator>
-) : Combinator(extensionPointName, nodes, "mutex") {
+) : Combinator(extensionPointName, nodes, "chain") {
     override fun invokeImpl(input: ExtensionPointInput): ExtensionPointOutput {
         for (node in nodes) {
             val (output) = node(input)

@@ -55,7 +55,7 @@ abstract class Combinator(
                     accumulator.add(extension)
                 }
             } else {
-                for (node in nodes) {
+                for (node in tree.nodes) {
                     recur(accumulator, node)
                 }
             }
@@ -65,5 +65,9 @@ abstract class Combinator(
         recur(result, this)
 
         return result
+    }
+
+    override fun toString(): String {
+        return "Combinator(extensionPointName='$extensionPointName', name='$name')"
     }
 }
