@@ -18,6 +18,9 @@ abstract class ExtensionPointProvider {
     internal fun getExtensionPoint(): ExtensionPoint {
         val method = parseMethod(extensionPointInterface)
         return ExtensionPoint(extensionPointName, extensionPointInterface, method).apply {
+            if (YanwteOptions.logExtensionsBuild && log.isWarnEnabled) {
+                log.warn("tree, extensionPointInterface: $extensionPointInterface")
+            }
             this.combinator = tree()
         }
     }
