@@ -1,10 +1,13 @@
 package com.github.winteryoung.yanwte.spring.internals;
 
 import com.github.winteryoung.yanwte.YanwteException;
+import com.github.winteryoung.yanwte.YanwteOptions;
 import com.github.winteryoung.yanwte.internals.utils.ReflectionUtils;
 import com.github.winteryoung.yanwte.spring.YanwteExtensionPoint;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
@@ -29,6 +32,7 @@ import java.util.stream.Collectors;
  */
 @Component
 public class ExtensionPointRegister implements BeanFactoryPostProcessor {
+    private Logger log = LoggerFactory.getLogger(getClass());
     private ClassLoader ccl = Thread.currentThread().getContextClassLoader();
 
     @Override
@@ -54,6 +58,10 @@ public class ExtensionPointRegister implements BeanFactoryPostProcessor {
 
         for (Class<?> extensionPointClass : extensionPointClasses) {
             Class providerClass = getProviderClass(extensionPointClass);
+            if (YanwteOptions.getLogExtensionsBuild() && log.isWarnEnabled()) {
+                log.warn("postProcessBeanFactory, extensionPointInterface: " + extensionPointClass
+                        + ", provider: " + providerClass);
+            }
             BeanDefinition beanDefinition = buildBeanDefinition(extensionPointClass, providerClass);
             String uncapitalized = StringUtils.uncapitalize(extensionPointClass.getSimpleName());
 
