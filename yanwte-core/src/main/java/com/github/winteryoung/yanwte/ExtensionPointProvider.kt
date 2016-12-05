@@ -1,8 +1,8 @@
 package com.github.winteryoung.yanwte
 
 import com.github.winteryoung.yanwte.internals.ExtensionPoint
-import com.github.winteryoung.yanwte.internals.YanwteExtension
 import com.github.winteryoung.yanwte.internals.combinators.*
+import org.slf4j.LoggerFactory
 import java.lang.reflect.Method
 
 /**
@@ -70,6 +70,10 @@ abstract class ExtensionPointProvider {
      * parameterless constructor.
      */
     fun extOfClass(extensionClass: Class<*>): Combinator {
+        if (YanwteOptions.logExtensionsBuild && log.isWarnEnabled) {
+            log.warn("extOfClass, extensionPointInterface: $extensionPointInterface," +
+                    " extension class: $extensionClass")
+        }
         val extensionName = extensionClass.name
         return extOfClassName(extensionName)
     }
@@ -132,4 +136,8 @@ abstract class ExtensionPointProvider {
              */
             reducer: (List<T>) -> T
     ): Combinator = MapReduceCombinator(extensionPointName, nodes, reducer)
+
+    companion object {
+        private val log = LoggerFactory.getLogger(ExtensionPointProvider::class.java)
+    }
 }
