@@ -2,6 +2,7 @@ package com.github.winteryoung.yanwte
 
 import com.github.winteryoung.yanwte.internals.DefaultYanwtePlugin
 import com.github.winteryoung.yanwte.internals.utils.PackageNamedKeyMap
+import org.slf4j.LoggerFactory
 
 /**
  * A Yanwte plugin maintains the entrance to query extensions.
@@ -24,6 +25,7 @@ interface YanwtePlugin {
     companion object {
         private val packageNameToPlugin = PackageNamedKeyMap<YanwtePlugin>()
         private val defaultPlugin = DefaultYanwtePlugin()
+        private val log = LoggerFactory.getLogger(YanwtePlugin::class.java)
 
         internal fun clearPluginRegistry() {
             packageNameToPlugin.clear()
@@ -51,7 +53,13 @@ interface YanwtePlugin {
          */
         internal fun getPluginByExtensionName(extensionName: String): YanwtePlugin {
             val packageName = extensionName.substringBeforeLast(".")
-            return packageNameToPlugin[packageName] ?: defaultPlugin
+            val plugin = packageNameToPlugin[packageName] ?: defaultPlugin
+
+            if (YanwteOptions.logExtensionsBuild && log.isWarnEnabled) {
+                log.warn("extension name: $extensionName, plugin: $plugin")
+            }
+
+            return plugin
         }
     }
 }

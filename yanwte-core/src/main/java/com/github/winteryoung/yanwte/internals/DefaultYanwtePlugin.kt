@@ -32,4 +32,8 @@ internal class DefaultYanwtePlugin : YanwtePlugin {
             return it.newInstance()
         }
     }
+
+    override fun toString(): String {
+        return "DefaultYanwtePlugin()"
+    }
 }

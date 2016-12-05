@@ -1,7 +1,6 @@
 package com.github.winteryoung.yanwte.internals.combinators
 
-import com.github.winteryoung.yanwte.*
-import com.github.winteryoung.yanwte.internals.YanwteExtension
+import com.github.winteryoung.yanwte.YanwteException
 import com.github.winteryoung.yanwte.internals.utils.ReflectionUtils
 
 /**
@@ -16,12 +15,12 @@ internal class ExtensionSpaceNameCombinator(
         extensionSpaceName: String,
         failOnExtensionNotFound: Boolean
 ) : ExtensionAwareCombinatorProxy(
-        findExtOfSpaceAndExtPoint(extensionSpaceName, extensionPointInterface, failOnExtensionNotFound),
+        buildCombinatorFromSpaceAndExtPoint(extensionSpaceName, extensionPointInterface, failOnExtensionNotFound),
         extensionPointInterface.name,
         "extSpaceName"
 )
 
-private fun findExtOfSpaceAndExtPoint(
+private fun buildCombinatorFromSpaceAndExtPoint(
         extensionSpaceName: String,
         extensionPointInterface: Class<*>,
         failOnExtensionNotFound: Boolean

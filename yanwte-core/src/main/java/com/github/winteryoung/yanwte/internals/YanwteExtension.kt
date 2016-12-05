@@ -2,6 +2,7 @@ package com.github.winteryoung.yanwte.internals
 
 import com.github.winteryoung.yanwte.*
 import com.github.winteryoung.yanwte.internals.bytecode.generateExtensionExecutionDelegate
+import org.slf4j.LoggerFactory
 
 /**
  * A Yanwte extension is an implementation to an extension point.
@@ -43,7 +44,7 @@ internal class YanwteExtension(
         try {
             YanwteRuntime.currentRunningExtension = this
 
-            if (input.args.size > 0) {
+            if (input.args.isNotEmpty()) {
                 input.args[0]?.let { domainObj ->
                     YanwteContainer.getBizRecognizerResult(domainObj, extensionSpaceName)?.let {
                         if (!it) {
@@ -67,14 +68,12 @@ internal class YanwteExtension(
     }
 
     private fun runBizRecognizer(domainObj: Any, extensionSpaceName: String): Boolean {
-        return YanwteContainer.getBizRecognizer(extensionSpaceName)?.let {
-            it.recognizes(domainObj)
-        } ?: run {
-            true
-        }
+        return YanwteContainer.getBizRecognizer(extensionSpaceName)?.recognizes(domainObj) ?: true
     }
 
     companion object {
+        private val log = LoggerFactory.getLogger(YanwteExtension::class.java)
+
         /**
          * Constructs [YanwteExtension] from a POJO instance.
          */
@@ -82,6 +81,11 @@ internal class YanwteExtension(
             val extClass = extension.javaClass
             val extPointName = extensionPoint.name
             val extName = extClass.name
+
+            if (YanwteOptions.logExtensionsBuild && log.isWarnEnabled) {
+                log.warn("Build extension from POJO class $extClass, extName: $extName, extPointName: $extPointName")
+            }
+
             return YanwteExtension(extName, extension) { input ->
                 val extPoint = YanwteContainer.getExtensionPointByName(extPointName)
                 if (extPoint == null) {

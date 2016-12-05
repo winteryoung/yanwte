@@ -1,6 +1,7 @@
 package com.github.winteryoung.yanwte.internals.combinators
 
-import com.github.winteryoung.yanwte.*
+import com.github.winteryoung.yanwte.YanwteException
+import com.github.winteryoung.yanwte.YanwtePlugin
 import com.github.winteryoung.yanwte.internals.YanwteExtension
 
 /**
@@ -15,12 +16,12 @@ internal class ExtensionNameCombinator(
         extensionPointInterface: Class<*>,
         failOnExtensionNotFound: Boolean
 ) : ExtensionAwareCombinatorProxy(
-        findExtOfName(extensionName, extensionPointInterface, failOnExtensionNotFound),
+        buildCombinatorFromExtensionName(extensionName, extensionPointInterface, failOnExtensionNotFound),
         extensionPointInterface.name,
         "extName"
 )
 
-private fun findExtOfName(
+private fun buildCombinatorFromExtensionName(
         extensionName: String, extensionPointInterface: Class<*>, failOnExtensionNotFound: Boolean
 ): ExtensionAwareCombinator {
     YanwtePlugin.getPluginByExtensionName(extensionName).let { plugin ->

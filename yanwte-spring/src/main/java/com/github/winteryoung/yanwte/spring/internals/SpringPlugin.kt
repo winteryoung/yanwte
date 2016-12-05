@@ -32,4 +32,8 @@ internal class SpringPlugin(val applicationContext: ApplicationContext) : Yanwte
             return extensions[0]
         }
     }
+
+    override fun toString(): String {
+        return "SpringPlugin()"
+    }
 }

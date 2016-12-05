@@ -1,6 +1,8 @@
 package springtest.biz.even
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import springtest.services.EvenNumberService
 import springtest.spi.NumberFormatter
 import springtest.spi.NumberProcessor
 
@@ -10,13 +12,11 @@ import springtest.spi.NumberProcessor
  */
 @Component
 class EvenNumberBiz : NumberProcessor, NumberFormatter {
-    override fun processInt(i: Int?): Int? {
-        if (i != null && i % 2 == 0) {
-            return i - 1
-        }
+    @Autowired
+    private lateinit var evenNumberService: EvenNumberService
 
-        // we cannot deal with it, let others do the work
-        return null
+    override fun processInt(i: Int?): Int? {
+        return evenNumberService.processInt(i)
     }
 
     override fun format(num: Int?): String? {
