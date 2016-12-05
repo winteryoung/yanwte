@@ -23,7 +23,7 @@ internal class YanwteExtension(
         /**
          * The actual action of the extension.
          */
-        val action: (ExtensionPointInput) -> ExtensionPointOutput
+        val extensionExecution: Lazy<ExtensionExecution>
 ) {
     /**
      * The extension space name.
@@ -61,7 +61,7 @@ internal class YanwteExtension(
                 }
             }
 
-            return action(input)
+            return extensionExecution.value.execute(input)
         } finally {
             YanwteRuntime.currentRunningExtension = null
         }
@@ -83,19 +83,19 @@ internal class YanwteExtension(
             val extName = extClass.name
 
             if (YanwteOptions.logExtensionsBuild && log.isWarnEnabled) {
-                log.warn("Build extension from POJO class $extClass, extName: $extName, extPointName: $extPointName")
+                log.warn("Build extension from POJO class $extClass, hash: ${extension.hashCode()}," +
+                        " extName: $extName, extPointName: $extPointName")
             }
 
-            return YanwteExtension(extName, extension) { input ->
+            return YanwteExtension(extName, extension, lazy {
                 val extPoint = YanwteContainer.getExtensionPointByName(extPointName)
                 if (extPoint == null) {
                     val exMsg = "Cannot find extension point $extPointName for extension $extName"
                     throw YanwteException(exMsg)
                 }
 
-                val proxy = generateExtensionExecutionDelegate(extPoint, extension)
-                proxy.execute(input)
-            }
+                generateExtensionExecutionDelegate(extPoint, extension)
+            })
         }
     }
 }

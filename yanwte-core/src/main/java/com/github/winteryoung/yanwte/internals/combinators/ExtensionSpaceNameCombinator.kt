@@ -35,7 +35,8 @@ private fun buildCombinatorFromSpaceAndExtPoint(
 
     if (extClassCandidates.isEmpty()) {
         if (failOnExtensionNotFound) {
-            throw YanwteException("Cannot find extension POJO with extension space: $extensionSpaceName")
+            throw YanwteException("At least one extension for ${extensionPointInterface.name}" +
+                    " is expected for extension space: $extensionSpaceName")
         } else {
             EmptyCombinator(extensionPointInterface.name)
         }
