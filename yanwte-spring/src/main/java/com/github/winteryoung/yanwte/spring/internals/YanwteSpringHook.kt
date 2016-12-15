@@ -2,8 +2,9 @@ package com.github.winteryoung.yanwte.spring.internals
 
 import com.github.winteryoung.yanwte.YanwteException
 import com.github.winteryoung.yanwte.YanwtePlugin
-import org.springframework.context.ApplicationListener
-import org.springframework.context.event.ContextRefreshedEvent
+import org.springframework.beans.factory.InitializingBean
+import org.springframework.context.ApplicationContext
+import org.springframework.context.ApplicationContextAware
 
 /**
  * Define a bean of this class in your spring application context.
@@ -17,31 +18,23 @@ import org.springframework.context.event.ContextRefreshedEvent
  * @author Winter Young
  * @since 2016/1/23
  */
-class YanwteSpringHook : ApplicationListener<ContextRefreshedEvent> {
+class YanwteSpringHook : InitializingBean, ApplicationContextAware {
+    private lateinit var applicationContext: ApplicationContext
+
     /**
-     * The base package of your program.
+     * The base package of your program. e.g. The base package
+     * of yanwte is `com.github.winteryoung.yanwte`
      */
     var basePackage: String? = null
 
-    override fun onApplicationEvent(event: ContextRefreshedEvent) {
-        val packageName = basePackage ?: throw YanwteException("The base package of your program is required")
-        val applicationContext = event.applicationContext
-
-        val springPlugin = SpringPlugin(applicationContext)
-        YanwtePlugin.registerPlugin(springPlugin, packageName)
-
-        if (started) {
-            return
-        }
-        started = true
+    override fun setApplicationContext(applicationContext: ApplicationContext) {
+        this.applicationContext = applicationContext
     }
 
-    companion object {
-        /**
-         * If this hook has been started.
-         */
-        @Volatile
-        var started = false
-            private set
+    override fun afterPropertiesSet() {
+        val packageName = basePackage ?: throw YanwteException("The base package of your program is required")
+        val springPlugin = SpringPlugin(applicationContext)
+
+        YanwtePlugin.registerPlugin(springPlugin, packageName)
     }
 }
