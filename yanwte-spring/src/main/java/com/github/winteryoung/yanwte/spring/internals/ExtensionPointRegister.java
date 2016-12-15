@@ -44,9 +44,11 @@ public class ExtensionPointRegister implements BeanFactoryPostProcessor {
             throw new YanwteException(e.getMessage(), e);
         }
 
-        log.warn("postProcessBeanFactory, classes scanned:\n" + Arrays.stream(classes)
-                .map(Class::getName)
-                .collect(Collectors.joining("\n")));
+        if (YanwteOptions.getLogExtensionsBuild() && log.isWarnEnabled()) {
+            log.warn("postProcessBeanFactory, classes scanned:\n" + Arrays.stream(classes)
+                    .map(Class::getName)
+                    .collect(Collectors.joining("\n")));
+        }
 
         List<Class<?>> extensionPointClasses = Arrays.stream(classes).filter((Class cls) -> {
             Annotation annotation = null;
