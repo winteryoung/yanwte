@@ -23,15 +23,9 @@ class YanwteSpringHook : ApplicationListener<ContextRefreshedEvent> {
      */
     var basePackage: String? = null
 
-    /**
-     * If this hook has been started.
-     */
-    @Volatile
-    private var started = false
-
-    override fun onApplicationEvent(event: ContextRefreshedEvent?) {
+    override fun onApplicationEvent(event: ContextRefreshedEvent) {
         val packageName = basePackage ?: throw YanwteException("The base package of your program is required")
-        val applicationContext = event!!.applicationContext
+        val applicationContext = event.applicationContext
 
         if (started) {
             return
@@ -40,5 +34,14 @@ class YanwteSpringHook : ApplicationListener<ContextRefreshedEvent> {
 
         val springPlugin = SpringPlugin(applicationContext)
         YanwtePlugin.registerPlugin(springPlugin, packageName)
+    }
+
+    companion object {
+        /**
+         * If this hook has been started.
+         */
+        @Volatile
+        var started = false
+            private set
     }
 }
