@@ -1,9 +1,7 @@
 package com.github.winteryoung.yanwte.spring.internals
 
 import com.github.winteryoung.yanwte.YanwteException
-import com.github.winteryoung.yanwte.YanwteOptions
 import com.github.winteryoung.yanwte.YanwtePlugin
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.ApplicationListener
 import org.springframework.context.event.ContextRefreshedEvent
 
@@ -31,9 +29,6 @@ class YanwteSpringHook : ApplicationListener<ContextRefreshedEvent> {
     @Volatile
     private var started = false
 
-    @Value("\${yanwte.log.extensions.build:false}")
-    private lateinit var logExtensionsBuild: String
-
     override fun onApplicationEvent(event: ContextRefreshedEvent?) {
         val packageName = basePackage ?: throw YanwteException("The base package of your program is required")
         val applicationContext = event!!.applicationContext
@@ -45,7 +40,5 @@ class YanwteSpringHook : ApplicationListener<ContextRefreshedEvent> {
 
         val springPlugin = SpringPlugin(applicationContext)
         YanwtePlugin.registerPlugin(springPlugin, packageName)
-
-        YanwteOptions.logExtensionsBuild = logExtensionsBuild.toBoolean()
     }
 }
