@@ -21,7 +21,7 @@ public class ExtensionPointProviderFactoryBean {
      */
     public Object createExtensionPointProvider(Class<?> extensionPointClass) {
         if (YanwteOptions.getLogExtensionsBuild() && log.isWarnEnabled()) {
-            log.warn("tree, extensionPointInterface: " + extensionPointClass);
+            log.warn("createExtensionPointProvider, extensionPointInterface: " + extensionPointClass);
         }
         return YanwteContainer.getExtensionPointByClass(extensionPointClass);
     }
