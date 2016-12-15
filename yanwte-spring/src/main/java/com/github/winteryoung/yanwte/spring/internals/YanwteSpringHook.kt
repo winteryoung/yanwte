@@ -27,13 +27,13 @@ class YanwteSpringHook : ApplicationListener<ContextRefreshedEvent> {
         val packageName = basePackage ?: throw YanwteException("The base package of your program is required")
         val applicationContext = event.applicationContext
 
+        val springPlugin = SpringPlugin(applicationContext)
+        YanwtePlugin.registerPlugin(springPlugin, packageName)
+
         if (started) {
             return
         }
         started = true
-
-        val springPlugin = SpringPlugin(applicationContext)
-        YanwtePlugin.registerPlugin(springPlugin, packageName)
     }
 
     companion object {
