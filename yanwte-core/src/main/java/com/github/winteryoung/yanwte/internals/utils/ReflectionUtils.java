@@ -101,7 +101,7 @@ public class ReflectionUtils {
                 result.add(cls);
             }
         }
-        return result.toArray(new Class[result.size()]);
+        return result.toArray(new Class<?>[result.size()]);
     }
 
     private static Class<?> resolveClass(ClassLoader cl, ClassPathResource resource) {

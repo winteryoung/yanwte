@@ -50,7 +50,7 @@ public class ExtensionPointRegister implements BeanFactoryPostProcessor {
                     .collect(Collectors.joining("\n")));
         }
 
-        List<Class<?>> extensionPointClasses = Arrays.stream(classes).filter((Class cls) -> {
+        List<Class<?>> extensionPointClasses = Arrays.stream(classes).filter((Class<?> cls) -> {
             Annotation annotation = null;
             try {
                 annotation = cls.getAnnotation(YanwteExtensionPoint.class);
@@ -66,7 +66,7 @@ public class ExtensionPointRegister implements BeanFactoryPostProcessor {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
         for (Class<?> extensionPointClass : extensionPointClasses) {
-            Class providerClass = getProviderClass(extensionPointClass, classLoader);
+            Class<?> providerClass = getProviderClass(extensionPointClass, classLoader);
             if (YanwteOptions.getLogExtensionsBuild() && log.isWarnEnabled()) {
                 log.warn("postProcessBeanFactory, extensionPointInterface: " + extensionPointClass
                         + ", provider: " + providerClass);
@@ -80,7 +80,7 @@ public class ExtensionPointRegister implements BeanFactoryPostProcessor {
     }
 
     @NotNull
-    private BeanDefinition buildBeanDefinition(Class<?> extensionPointClass, Class providerClass) {
+    private BeanDefinition buildBeanDefinition(Class<?> extensionPointClass, Class<?> providerClass) {
         RootBeanDefinition beanDefinition = (RootBeanDefinition) BeanDefinitionBuilder
                 .rootBeanDefinition(providerClass)
                 .setLazyInit(true)
@@ -94,7 +94,7 @@ public class ExtensionPointRegister implements BeanFactoryPostProcessor {
         return beanDefinition;
     }
 
-    private Class getProviderClass(Class<?> extensionPointClass, ClassLoader classLoader) {
+    private Class<?> getProviderClass(Class<?> extensionPointClass, ClassLoader classLoader) {
         try {
             return classLoader.loadClass(extensionPointClass.getName() + "Provider");
         } catch (ClassNotFoundException e) {

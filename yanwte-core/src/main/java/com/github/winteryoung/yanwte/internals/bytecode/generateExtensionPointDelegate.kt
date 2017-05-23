@@ -106,7 +106,7 @@ private fun buildDelegateMethod(
 
         val l1 = Label() // args.add(param)
         visitLabel(l1)
-        delegateMethod.parameterTypes.forEachIndexed { i, paramType ->
+        delegateMethod.parameterTypes.forEachIndexed { i, _ ->
             visitVarInsn(ALOAD, argsVarIndex)
             visitVarInsn(ALOAD, i + 1)
             visitMethodInsn(INVOKEVIRTUAL, "java/util/ArrayList", "add", "(Ljava/lang/Object;)Z", false)
