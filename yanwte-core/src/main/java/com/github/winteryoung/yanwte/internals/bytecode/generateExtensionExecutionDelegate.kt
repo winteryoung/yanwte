@@ -38,7 +38,8 @@ internal fun generateExtensionExecutionDelegate(
         extension: Any
 ): ExtensionExecution {
     if (!extensionPoint.samInterface.isAssignableFrom(extension.javaClass)) {
-        throw IllegalArgumentException()
+        val msg = "Extension ${extension.javaClass} does not implement extension point interface: ${extensionPoint.samInterface}"
+        throw IllegalArgumentException(msg)
     }
 
     val (name, bytes) = generateExtensionExecutionDelegateBytes(extensionPoint)
