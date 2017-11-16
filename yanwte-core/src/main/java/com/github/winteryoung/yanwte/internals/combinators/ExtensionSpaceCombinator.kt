@@ -1,8 +1,6 @@
 package com.github.winteryoung.yanwte.internals.combinators
 
-import com.github.winteryoung.yanwte.*
-import com.github.winteryoung.yanwte.internals.YanwteExtension
-import com.github.winteryoung.yanwte.internals.utils.ReflectionUtils
+import com.github.winteryoung.yanwte.YanwteExtensionSpace
 
 /**
  * A combinator that finds the corresponding extension by its extension space.

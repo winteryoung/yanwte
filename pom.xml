@@ -21,7 +21,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jdk.version>1.8</jdk.version>
-        <kotlin.version>1.1.2-2</kotlin.version>
+        <kotlin.version>1.1.51</kotlin.version>
         <spring.version>4.2.7.RELEASE</spring.version>
     </properties>
 
@@ -151,11 +151,6 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>3.4</version>
-            </dependency>
-            <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>1.7.7</version>
@@ -163,7 +158,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>19.0</version>
+                <version>23.4-jre</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
