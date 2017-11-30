@@ -1,16 +1,9 @@
 package integrationTests.mixedTest
 
-import com.github.winteryoung.yanwte.Combinator
 import com.github.winteryoung.yanwte.DataExtensionPoint
-import com.github.winteryoung.yanwte.ExtensionPointProvider
 import com.github.winteryoung.yanwte.YanwteContainer
-import integrationTests.mixedTest.extspace1.ExtensionSpace1
-import integrationTests.mixedTest.extspace1.TestExtension1
-import integrationTests.mixedTest.extspace2.TestExtension2
-import org.junit.After
-import org.junit.Assert
-import org.junit.Before
-import org.junit.Test
+import com.github.winteryoung.yanwte.YanwteOptions
+import org.junit.*
 
 /**
  * @author Winter Young
@@ -48,17 +41,3 @@ class TestData(
 data class TestDataExt(
         val i: Int
 )
-
-interface TestExtensionPoint {
-    fun foo(testData: TestData): String?
-}
-
-class TestExtensionPointProvider : ExtensionPointProvider() {
-    override fun tree(): Combinator {
-        return chain(
-                extOfExtSpace(ExtensionSpace1::class.java),
-                extOfClass(TestExtension2::class.java)
-        )
-    }
-}
-

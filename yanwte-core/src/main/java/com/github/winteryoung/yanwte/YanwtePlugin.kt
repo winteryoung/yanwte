@@ -56,7 +56,7 @@ interface YanwtePlugin {
             val plugin = packageNameToPlugin[packageName] ?: defaultPlugin
 
             if (YanwteOptions.logExtensionsBuild && log.isWarnEnabled) {
-                log.warn("extension name: $extensionName, plugin: $plugin")
+                log.warn("Yanwte loads extension <$extensionName> from plugin <$plugin>")
             }
 
             return plugin

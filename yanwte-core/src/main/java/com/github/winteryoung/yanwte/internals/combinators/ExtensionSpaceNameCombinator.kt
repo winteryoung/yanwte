@@ -52,7 +52,7 @@ private fun scanClasses(extensionSpaceName: String, extensionPointInterface: Cla
                 it.load()
             }
             .filter {
-                it.isAssignableFrom(extensionPointInterface)
+                extensionPointInterface.isAssignableFrom(it)
             }
             .let {
                 return it

@@ -13,7 +13,7 @@ import springtest.spi.NumberFormatter
 import springtest.spi.NumberProcessor
 
 @RunWith(SpringJUnit4ClassRunner::class)
-@ContextConfiguration(classes = arrayOf(SpringTest::class, YanwteSpringConfig::class))
+@ContextConfiguration(classes = [SpringTest::class, YanwteSpringConfig::class])
 @ComponentScan
 class SpringTest {
     // the bean name must be the pattern [beanNameForInterface] + "Provider"
