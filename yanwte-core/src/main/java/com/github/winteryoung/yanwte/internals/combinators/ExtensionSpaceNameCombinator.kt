@@ -1,7 +1,7 @@
 package com.github.winteryoung.yanwte.internals.combinators
 
 import com.github.winteryoung.yanwte.YanwteException
-import com.github.winteryoung.yanwte.internals.utils.ReflectionUtils
+import com.google.common.reflect.ClassPath
 
 /**
  * A combinator that finds the corresponding extension by its extension space name.
@@ -25,8 +25,7 @@ private fun buildCombinatorFromSpaceAndExtPoint(
         extensionPointInterface: Class<*>,
         failOnExtensionNotFound: Boolean
 ): ExtensionAwareCombinator {
-    val classes = ReflectionUtils.getClasses(extensionSpaceName, Thread.currentThread().contextClassLoader)
-    val extClassCandidates: List<Class<*>> = classes.filter { extensionPointInterface.isAssignableFrom(it) }
+    val extClassCandidates = scanClasses(extensionSpaceName, extensionPointInterface)
 
     if (extClassCandidates.size > 1) {
         throw YanwteException("At most one extension for ${extensionPointInterface.name}" +
@@ -44,4 +43,18 @@ private fun buildCombinatorFromSpaceAndExtPoint(
 
     val extClass = extClassCandidates.single()
     return ExtensionNameCombinator(extClass.name, extensionPointInterface, failOnExtensionNotFound)
+}
+
+private fun scanClasses(extensionSpaceName: String, extensionPointInterface: Class<*>): List<Class<*>> {
+    ClassPath.from(Thread.currentThread().contextClassLoader)
+            .getTopLevelClassesRecursive(extensionSpaceName)
+            .map {
+                it.load()
+            }
+            .filter {
+                extensionPointInterface.isAssignableFrom(it)
+            }
+            .let {
+                return it
+            }
 }

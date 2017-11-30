@@ -83,7 +83,7 @@ internal class YanwteExtension(
             val extName = extClass.name
 
             if (YanwteOptions.logExtensionsBuild && log.isWarnEnabled) {
-                log.warn("Build extension from POJO class $extClass, hash: ${extension.hashCode()}," +
+                log.warn("Yanwte builds extension from POJO class $extClass, hash: ${extension.hashCode()}," +
                         " extName: $extName, extPointName: $extPointName")
             }
 

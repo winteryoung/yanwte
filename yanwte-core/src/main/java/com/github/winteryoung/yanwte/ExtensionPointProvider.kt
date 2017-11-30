@@ -19,7 +19,7 @@ abstract class ExtensionPointProvider {
         val method = parseMethod(extensionPointInterface)
         return ExtensionPoint(extensionPointName, extensionPointInterface, method).apply {
             if (YanwteOptions.logExtensionsBuild && log.isWarnEnabled) {
-                log.warn("tree, extensionPointInterface: $extensionPointInterface")
+                log.warn("Build Yanwte tree, extensionPointInterface: $extensionPointInterface")
             }
             this.combinator = tree()
         }
@@ -70,11 +70,11 @@ abstract class ExtensionPointProvider {
 
     /**
      * Returns the extension combinator of the given class. [extensionClass] must have a
-     * parameterless constructor.
+     * parameter-less constructor.
      */
     fun extOfClass(extensionClass: Class<*>): Combinator {
         if (YanwteOptions.logExtensionsBuild && log.isWarnEnabled) {
-            log.warn("extOfClass, extensionPointInterface: $extensionPointInterface," +
+            log.warn("Yanwte gets extension, extensionPointInterface: $extensionPointInterface," +
                     " extension class: $extensionClass")
         }
         val extensionName = extensionClass.name
