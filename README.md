@@ -1,3 +1,5 @@
+**Yanwte has been replaced by Yanwte2. Please refer to https://github.com/winteryoung/yanwte2**
+
 Yanwte [ˈyænti] stands for yet another way to extend. It's a library to help you extending your programs. This library is written in Kotlin, and is compatible with Java 6.
 
 # Where Does It Come From?
